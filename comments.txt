@@ -1,0 +1,2 @@
+TODOS: 
+- Configure URL Schemes on Android and Apple
