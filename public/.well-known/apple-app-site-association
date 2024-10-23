@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "SVYV3Y9UYA.com.company.dispopen"
+        ],
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches all routes"
+          }
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "SVYV3Y9UYA.com.company.dispopen"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "SVYV3Y9UYA.com.company.dispopen"
+    ]
+  }
+}
