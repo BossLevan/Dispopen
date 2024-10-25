@@ -4,12 +4,6 @@ import { usePrivy } from "@privy-io/expo";
 
 export default function HomeScreen() {
   const { signOut } = useSession();
-  const { logout } = usePrivy();
-
-  const onPress = async () => {
-    signOut();
-    await logout();
-  };
 
   return (
     <View
@@ -20,7 +14,7 @@ export default function HomeScreen() {
       }}
     >
       <Text>Logout from this mf app.</Text>
-      <Button title="Logout" onPress={onPress} />
+      <Button title="Logout" onPress={signOut} />
     </View>
   );
 }

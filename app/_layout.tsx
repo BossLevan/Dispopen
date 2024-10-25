@@ -55,19 +55,19 @@ export default function RootLayout() {
 
   return (
     <>
-      <SessionProvider>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <PrivyProvider
-              appId="cm22h0e5o00w23s57v1nnm0ww"
-              clientId="client-WY5cXUpgShbmeWe8YYTGi2xzgQ2915JowmbkvJpaUceF3"
-            >
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <PrivyProvider
+            appId="cm22h0e5o00w23s57v1nnm0ww"
+            clientId="client-WY5cXUpgShbmeWe8YYTGi2xzgQ2915JowmbkvJpaUceF3"
+          >
+            <SessionProvider>
               <RootLayoutNav />
               <PrivyElements />
-            </PrivyProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </SessionProvider>
+            </SessionProvider>
+          </PrivyProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </>
   );
 }

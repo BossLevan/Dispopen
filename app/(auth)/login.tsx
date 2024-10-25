@@ -1,19 +1,9 @@
-import { useLogin, usePrivy } from "@privy-io/expo";
 import { Button, Text, View } from "react-native";
 import { useSession } from "@/components/ctx";
 
 export default function AuthScreen() {
-  const { login } = useLogin();
-  const { signIn } = useSession();
-  const { logout } = usePrivy();
+  const { signIn, signOut } = useSession();
 
-  const onPress = () => {
-    login({ loginMethods: ["email"] }).then((session) => {
-      console.log("User logged in", session.user);
-      signIn();
-      //handle errors
-    });
-  };
   return (
     <View
       style={{
@@ -23,8 +13,8 @@ export default function AuthScreen() {
       }}
     >
       <Text>Welcome to the Secret app</Text>
-      <Button title="Use Privy" onPress={onPress} />
-      <Button title="Logout" onPress={logout} />
+      <Button title="Use Privy" onPress={signIn} />
+      <Button title="Logout" onPress={signOut} />
     </View>
   );
 }
