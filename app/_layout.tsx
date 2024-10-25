@@ -32,19 +32,14 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    // You can keep the splash screen open, or render a loading screen like we do here.
-    // if (isLoading) {
-    //   return <Text>Loading...</Text>;
-    // }
-
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!inAuthGroup) {
-      // Redirect to the sign-in page.
+    if (!session && !inAuthGroup) {
+      console.log("Not authenticated, redirecting to login");
       router.replace("/(auth)/login");
     } else if (session && inAuthGroup) {
-      // Redirect away from the sign-in page.
-      router.replace("/home");
+      console.log("Authenticated, redirecting to home");
+      router.replace("/(home)");
     }
   }, [session, segments, isLoading]);
 
