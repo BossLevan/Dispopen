@@ -7,9 +7,10 @@ import {
   } from "@mobile-wallet-protocol/wagmi-connectors";
 
 import { base } from 'wagmi/chains'
+import * as Linking from "expo-linking";
    
   const metadata = {
-    appDeeplinkUrl: 'https://www.dispopen.com', // required to establish your app's identity, use 'https://' link for production
+    appDeeplinkUrl: "https://www.dispopen.com", // required to establish your app's identity, use 'https://' link for production
     // appCustomScheme: 'myapp://', // optional, used to remove the Done screen after signing
     appName: "Dispopen",
     appChainIds: [8453],

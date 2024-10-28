@@ -17,10 +17,17 @@ import { PrivyElements } from "@privy-io/expo";
 import { SessionProvider, useSession } from "../components/ctx";
 import { useEffect } from "react";
 import React from "react";
+import { handleResponse } from "@mobile-wallet-protocol/client";
+import * as Linking from "expo-linking";
 
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
+  useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+  });
   // Define the possible segment types.
   // TODO: Need to refactor this
   // type Segment = "" | "_sitemap" | "mobile-wallet-protocol" | "(auth)" | string;
@@ -29,6 +36,19 @@ function RootLayoutNav() {
   const segments = useSegments();
   const router = useRouter();
 
+  useEffect(() => {
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      console.log("incoming deeplink:", url);
+      try {
+        handleResponse(url);
+        router.back(); //Need this to work with expo router
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
   useEffect(() => {
     if (isLoading) return;
 
@@ -43,16 +63,27 @@ function RootLayoutNav() {
     }
   }, [session, segments, isLoading]);
 
-  return <Slot />;
+  return (
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: "white" },
+      }}
+    >
+      <Stack.Screen
+        name="(home)/index"
+        options={{ headerShown: false }} //Feel free to control the animation here
+      />
+      <Stack.Screen
+        name="(auth)/login"
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
-  useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-  });
-
   return (
     <>
       <WagmiProvider config={config}>
