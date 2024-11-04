@@ -5,9 +5,13 @@ import {
     createConnectorFromWallet,
     Wallets,
   } from "@mobile-wallet-protocol/wagmi-connectors";
+  import { createPublicClient} from "viem";
 
-import { base } from 'wagmi/chains'
+import { base, baseSepolia } from 'wagmi/chains'
 import * as Linking from "expo-linking";
+
+
+import { createClient} from "viem";
    
   const metadata = {
     appDeeplinkUrl: "https://www.dispopen.com", // required to establish your app's identity, use 'https://' link for production
@@ -29,7 +33,11 @@ import * as Linking from "expo-linking";
       [base.id]: http(),
     },
   });
+  
 
+ 
+const paymasterService = process.env.PAYMASTER_SERVICE_URL!;
+ 
   function polyfillForWagmi() {
     const noop = (() => {}) as any;
   

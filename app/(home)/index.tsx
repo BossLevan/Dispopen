@@ -11,6 +11,7 @@ export default function HomeScreen() {
   const { signOut } = useSession();
   const { connect, connectors } = useConnect();
   const router = useRouter();
+  const { user } = usePrivy();
   const { signMessage } = useSignMessage({
     mutation: {
       onSuccess: (signature) => {
@@ -28,7 +29,8 @@ export default function HomeScreen() {
 
   const [signature, setSignature] = useState("");
   const [linked, setLinked] = useState(false);
-  const { user } = usePrivy();
+  const [address, setAddress] = useState("");
+  const [message, setMessage] = useState<SignableMessage>();
 
   //difference is this is supposed to be linked with Wallet
   const [privyUser, setPrivyUser] = useState(user);
@@ -38,8 +40,6 @@ export default function HomeScreen() {
     onError: console.log,
     onGenerateMessage: console.log,
   });
-  const [address, setAddress] = useState("");
-  const [message, setMessage] = useState<SignableMessage>();
 
   const handleDisconnect = () => {
     disconnect();
@@ -137,6 +137,10 @@ export default function HomeScreen() {
       {Boolean(message) && <Button title="Sign Message" onPress={handleSign} />}
       <Button title="Connect Wallet" onPress={connectWallet} />
       <Button title="Link Wallet with Privy" onPress={link} />
+      <Button
+        title="Go to Zora Screen"
+        onPress={() => router.push("/(home)/zora")}
+      />
     </View>
   );
 }
