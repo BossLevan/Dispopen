@@ -1,6 +1,7 @@
 import { useContext, createContext, type PropsWithChildren } from "react";
 import { useStorageState } from "../hooks/useStorageState";
 import { useLogin, usePrivy } from "@privy-io/expo";
+import { useRouter } from "expo-router";
 
 const AuthContext = createContext<{
   signIn: () => void;
@@ -29,6 +30,7 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const { login } = useLogin();
   const { logout } = usePrivy();
+  const router = useRouter();
 
   const [[isLoading, session], setSession] = useStorageState("session");
 
@@ -36,11 +38,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
     <AuthContext.Provider
       value={{
         signIn: () => {
-          login({ loginMethods: ["email"] }).then((session) => {
-            console.log("User logged in", session.user);
-            setSession("xxx");
-            //handle errors
-          });
+          login({ loginMethods: ["email"] })
+            .then((session) => {
+              console.log("User logged in", session.user);
+              setSession("xxx");
+
+              //handle errors
+            })
+            .catch((e) => console.log(e));
         },
         signOut: () => {
           logout();

@@ -9,7 +9,8 @@
 
 import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { PinataSDK, PinResponse } from "pinata-web3"
+import { PinataSDK, PinResponse} from "pinata-web3"
+
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -27,16 +28,26 @@ const pinata = new PinataSDK({
   pinataGateway: process.env.GATEWAY_URL
 });
 
+
+
 export const pinFileToPinata = onCall(async (request) => {
   // Log the function call
   logger.info("pinFileToPinata function called", {structuredData: true});
-
   try {
       //Pin the image / file first
-      const result: PinResponse = await pinata.upload.file(request.data.file);
+      const res = await fetch(`data:image/jpeg;base64,${request.data.file}`);
+      const blob = new Blob([await res.blob()]);
+      logger.info(blob)
+      const file = new File([blob], request.data.name, { type: "image/jpeg" });
+      const result: PinResponse = await pinata.upload.file(file)
 
+      logger.info(result);
       // Log success and send response
       logger.info("File pinned successfully", {ipfsHash: result.IpfsHash});
+      logger.info(result.IpfsHash);
+ 
+      return `ipfs://{result.IpfsHash}`;
+
 
       //then pin the metadata
       const metadata: PinResponse = await pinata.upload.json({

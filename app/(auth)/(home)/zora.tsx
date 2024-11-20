@@ -2,7 +2,11 @@ import { Button, Text, View } from "react-native";
 
 import { zora } from "viem/chains";
 import { firebaseApp } from "@/firebaseConfig";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import {
+  getFunctions,
+  httpsCallable,
+  connectFunctionsEmulator,
+} from "firebase/functions";
 
 import {
   useAccount,
@@ -23,6 +27,7 @@ import { CallStatus } from "@/components/CallStatus";
 
 export default function Index() {
   const functions = getFunctions(firebaseApp);
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   const pinFileToPinata = httpsCallable(functions, "pinFileToPinata");
 
   const [selectedFile, setSelectedFile]: any = useState();
@@ -32,29 +37,31 @@ export default function Index() {
     setSelectedFile(event.target.files[0]);
   };
 
-  //Data to Pin
-  pinFileToPinata({
-    file: selectedFile,
-    name: "",
-    description: "",
-    attributes: {
-      trait_type: "contributing_artist_name",
-      value: "",
-    },
-  })
-    .then((result) => {
-      // Read result of the Cloud Function.
-      /** @type {any} */
-      const data: any = result.data;
-      const sanitizedMessage = data.metadataUrl;
+  const sendFileToPinata = () => {
+    //Data to Pin
+    pinFileToPinata({
+      file: selectedFile,
+      name: "",
+      description: "",
+      attributes: {
+        trait_type: "contributing_artist_name",
+        value: "",
+      },
     })
-    .catch((error) => {
-      // Getting the Error details.
-      const code = error.code;
-      const message = error.message;
-      const details = error.details;
-      throw error;
-    });
+      .then((result) => {
+        // Read result of the Cloud Function.
+        /** @type {any} */
+        const data: any = result.data;
+        const sanitizedMessage = data.metadataUrl;
+      })
+      .catch((error) => {
+        // Getting the Error details.
+        const code = error.code;
+        const message = error.message;
+        const details = error.details;
+        throw error;
+      });
+  };
 
   const publicClient = createPublicClient({
     chain: zora as Chain,
@@ -94,6 +101,7 @@ export default function Index() {
           uri: "ipfs://DUMMY/contract.json",
         },
         token: {
+          createReferral: account.address,
           tokenMetadataURI: "ipfs://DUMMY/token.json",
         },
 
