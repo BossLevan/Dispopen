@@ -36,7 +36,12 @@ export default function FramesSelectionScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(300)).current;
 
-  const { sendFileToPinata, getToken, createToken } = useZoraTokenCreation();
+  const {
+    sendFileToPinata,
+    getToken,
+    createToken,
+    createTokenOnExistingContract,
+  } = useZoraTokenCreation();
 
   const frames = [
     {
@@ -114,8 +119,15 @@ export default function FramesSelectionScreen() {
     setTickerModalVisible(false);
   };
 
-  const handleDone = () => {
-    const result = sendFileToPinata(image as string, title);
+  const handleDone = async () => {
+    const result = await sendFileToPinata(image as string, title);
+    const address = await createToken(title, result as string, ticker);
+    console.log(address);
+
+    // const res = await createToken(
+    //   title,
+    //   "ipfs://bafybeibovhytxia2dfcibkiqtzofdd5euv4q4r6r4s4gv5zmrgqntzd2sy"
+    // );
     console.log(result);
     router.back();
   };

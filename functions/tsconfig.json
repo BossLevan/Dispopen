@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
+    "module": "ESNext",                // Use ESM modules
+    "target": "ES2020",                // Target modern JavaScript
+    "lib": ["ES2020"],
+    "moduleResolution": "Node",
+    "outDir": "lib",                   // Output directory for compiled JS
     "sourceMap": true,
+    "esModuleInterop": true,           // Enable ES Module interop
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "target": "es2017"
+    "noImplicitAny": false
   },
-  "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

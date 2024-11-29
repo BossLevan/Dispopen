@@ -43,7 +43,7 @@ function RootLayoutNav() {
       console.log("incoming deeplink:", url);
       try {
         handleResponse(url);
-        // router.back(); // Need this to work with expo router
+        router.back(); // Need this to work with expo router
       } catch (err) {
         console.error(err);
       }
@@ -53,14 +53,18 @@ function RootLayoutNav() {
   }, []);
 
   useEffect(() => {
-    // if (isLoading) return;
+    if (isLoading) return;
     console.log(isLoading);
+    console.log(session);
     const inAuthGroup = segments[0] === "(auth)";
     const inDisplayName = segments[1] === "display_name";
+    const isAlreadyOnTargetPage = (target: string) =>
+      segments.join("/") === target;
     // router.replace("/(home)");
-    if (session) {
+    if (session && !isAlreadyOnTargetPage("(auth)/(home)")) {
+      console.log("authenticated, redirecting to home");
       router.replace("/(auth)/(home)");
-    } else {
+    } else if (!session && !isAlreadyOnTargetPage("login")) {
       console.log("Not authenticated, redirecting to login");
       router.replace("/login");
     }
@@ -87,7 +91,8 @@ function RootLayoutNav() {
     // }
   }, [session]);
 
-  if (loaded) {
+  if (!loaded) {
+    console.log("loaded");
     return <Slot />; // You could return a loading spinner here if needed
   }
 

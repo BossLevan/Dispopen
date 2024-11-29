@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+// Add this to your existing imports
+import { useIsFocused } from "@react-navigation/native";
+import { ActivityIndicator, RefreshControl } from "react-native";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,6 +15,7 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  Button,
 } from "react-native";
 import {
   Settings,
@@ -25,11 +29,135 @@ import {
 } from "react-native-feather";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { useAccount } from "wagmi";
+import { useSession } from "@/components/ctx";
+import { useZoraTokenCreation } from "@/hooks/useZora";
+import { apiService, Token } from "@/api/api";
+import { useWallet } from "@/hooks/useWallet";
+import { convertIpfsToPinataUrl } from "@/utils/ipfs";
 
 export default function ProfileScreen() {
   const [isAndroidMenuVisible, setIsAndroidMenuVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
-  const images = Array(13).fill(null);
+  const [images, setImages] = useState<Token[]>();
+  // Add these new state variables
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const isFocused = useIsFocused();
+  const refreshTimeout = useRef<NodeJS.Timeout>();
+
+  // const images = Array(13).fill(null);
+  const { signOut } = useSession();
+  const { address } = useAccount();
+
+  const { getToken } = useZoraTokenCreation();
+
+  const {
+    connectWallet,
+    handleGenerateMessage,
+    handleSignMessage,
+    handleDisconnect,
+    linkWallet,
+    message,
+    linked,
+    privyUser,
+  } = useWallet();
+
+  // useEffect(() => {
+  //   fetchImages();
+  // }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      // fetchImages();
+      delayedRefresh();
+    }
+  }, [isFocused]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (refreshTimeout.current) {
+        clearTimeout(refreshTimeout.current);
+      }
+    };
+  }, []);
+
+  const fetchImages = async (): Promise<number> => {
+    const imagez = await apiService.getDispopens(address!);
+    setImages(imagez);
+    return imagez.length;
+  };
+
+  // Add this new function for pull-to-refresh
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchImages();
+    } catch (error) {
+      console.error("Error refreshing images:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  const delayedRefresh = useCallback(async () => {
+    //make sure its empty not null
+    if (images?.length != null) {
+    }
+    setIsLoading(true);
+    let previousLength = images?.length || 0;
+    console.log("previousLength)", previousLength);
+
+    // First immediate refresh
+    const num = await fetchImages();
+    let currentLength = num || 0;
+    console.log("currentLength", currentLength);
+
+    // If we found new data, stop here
+    if (currentLength > previousLength) {
+      setIsLoading(false);
+      return;
+    }
+
+    // If no new data, try a few more times with delays
+    const delays = [6000]; // 3s, 6s, 9s delays
+
+    // Clear any existing timeout
+    if (refreshTimeout.current) {
+      clearTimeout(refreshTimeout.current);
+    }
+
+    // Try refreshing until we find new data or run out of attempts
+    for (const delay of delays) {
+      refreshTimeout.current = setTimeout(async () => {
+        try {
+          previousLength = images?.length || 0;
+          let num = await fetchImages();
+          currentLength = num || 0;
+
+          // If we found new data, stop future refreshes
+          if (currentLength > previousLength) {
+            if (refreshTimeout.current) {
+              clearTimeout(refreshTimeout.current);
+            }
+            setIsLoading(false);
+            return;
+          }
+
+          // If this is the last attempt and still no new data
+          if (delay === delays[delays.length - 1]) {
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error("Error in delayed refresh:", error);
+          if (delay === delays[delays.length - 1]) {
+            setIsLoading(false);
+          }
+        }
+      }, delay);
+    }
+  }, [images?.length]);
 
   const handleFabPress = () => {
     if (Platform.OS === "ios") {
@@ -140,7 +268,17 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#ff4545"
+            colors={["#ff4545"]}
+          />
+        }
+      >
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>kosi.base.eth</Text>
@@ -199,25 +337,56 @@ export default function ProfileScreen() {
 
         <View style={styles.galleryContainer}>
           <View style={styles.galleryHeader}>
-            <Text style={styles.galleryTitle}>dispopens (7)</Text>
+            <Text style={styles.galleryTitle}>
+              dispopens ({images?.length})
+            </Text>
+            {isLoading && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#ff4545" />
+                <Text style={styles.loadingText}>Syncing...</Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.imageGrid}>
-            {images.map((_, index) => (
+            {images?.map((_, index) => (
               <View key={index} style={styles.imageContainer}>
                 <Pressable
                   onPress={() => {
-                    router.push(`/(auth)/(home)/details/${index}`);
+                    router.push({
+                      pathname: `/(auth)/(home)/details/${index}`,
+                      params: { token: JSON.stringify(_), tokenId: _.id },
+                    });
                   }}
                 >
                   <Image
-                    source={{ uri: "https://picsum.photos/200" }}
+                    source={{
+                      uri: convertIpfsToPinataUrl(_.metadata.image),
+                    }}
                     style={styles.image}
                   />
                 </Pressable>
               </View>
             ))}
           </View>
+        </View>
+        <View>
+          <Button title="Generate Message" onPress={handleGenerateMessage} />
+          <Button title="Disconnect" onPress={handleDisconnect} />
+
+          {Boolean(message) && <Text>{message as string}</Text>}
+          <Button title="Logout" onPress={signOut} />
+          {Boolean(message) && (
+            <Button title="Sign Message" onPress={handleSignMessage} />
+          )}
+          <Button title="Connect Wallet" onPress={connectWallet} />
+          <Button title="Link Wallet with Privy" onPress={linkWallet} />
+          <Button
+            title="Get Contract"
+            onPress={() =>
+              getToken("0x0D4e4f7Fa1148fB0CE1A911760b1751B9Ee8e525", 1n)
+            }
+          />
         </View>
       </ScrollView>
 
@@ -510,6 +679,16 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     color: "#FF3B30",
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: "#666",
+    fontFamily: "CabinetGrotesk-Medium",
   },
 });
 
