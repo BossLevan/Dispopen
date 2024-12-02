@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, createRef } from "react";
 import {
   View,
   Text,
@@ -21,13 +21,29 @@ import { useLocalSearchParams } from "expo-router";
 import { BadgeCheck, Clock, X } from "lucide-react-native";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
+import { captureRef } from "react-native-view-shot";
+import * as MediaLibrary from "expo-media-library";
 
 //zora imports
 import { useZoraTokenCreation } from "@/hooks/useZora";
+import CompositeImage from "@/components/CompositeImage";
+
+type Frame = {
+  id: string;
+  title: string;
+  artist: string;
+  image: string;
+  frameImageUri: string;
+};
+
+type FrameRefs = {
+  [key: string]: React.RefObject<View>;
+};
 
 export default function FramesSelectionScreen() {
   const [selectedFrame, setSelectedFrame] = useState("1");
   const [title, setTitle] = useState("");
+  const [selectedImageUri, setSelectedImageUri] = useState("");
   const [ticker, setTicker] = useState("");
   const [isTickerModalVisible, setTickerModalVisible] = useState(false);
   const [tempTicker, setTempTicker] = useState("");
@@ -36,39 +52,15 @@ export default function FramesSelectionScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(300)).current;
 
+  const [frames, setFrames] = useState<Frame[]>([]);
+  const refs = useRef<FrameRefs>({});
+
   const {
     sendFileToPinata,
     getToken,
     createToken,
     createTokenOnExistingContract,
   } = useZoraTokenCreation();
-
-  const frames = [
-    {
-      id: "1",
-      title: "Ethereal",
-      artist: "Jessica Ryan",
-      image: "https://picsum.photos/200",
-    },
-    {
-      id: "2",
-      title: "Virgil Abloh",
-      artist: "Saint Levan",
-      image: "https://picsum.photos/200",
-    },
-    {
-      id: "3",
-      title: "Moodeng",
-      artist: "Oma Anabogu",
-      image: "https://picsum.photos/200",
-    },
-    {
-      id: "4",
-      title: "Obsession",
-      artist: "Halima Starr",
-      image: "https://picsum.photos/200",
-    },
-  ];
 
   useEffect(() => {
     if (isTickerModalVisible) {
@@ -119,21 +111,103 @@ export default function FramesSelectionScreen() {
     setTickerModalVisible(false);
   };
 
-  const handleDone = async () => {
-    const result = await sendFileToPinata(image as string, title);
+  const handleMinting = async () => {
+    const result = await sendFileToPinata(selectedImageUri as string, title);
     const address = await createToken(title, result as string, ticker);
     console.log(address);
-
-    // const res = await createToken(
-    //   title,
-    //   "ipfs://bafybeibovhytxia2dfcibkiqtzofdd5euv4q4r6r4s4gv5zmrgqntzd2sy"
-    // );
-    console.log(result);
     router.back();
+  };
+
+  useEffect(() => {
+    if (selectedImageUri != "") {
+      handleMinting();
+    }
+  }, [selectedImageUri]); // This runs every time `selectedImageUri` changes
+
+  const handleDone = async () => {
+    await onSaveImageAsync(refs.current[selectedFrame]);
   };
 
   const handleCancel = () => {
     router.back();
+  };
+
+  // Function to simulate fetching frames from a server
+  const fetchFrames = async () => {
+    // Simulated API call
+    // Let your API start id's with 1 etc
+    const fetchedFrames = [
+      {
+        id: "1",
+        title: "Ethereal",
+        artist: "Jessica Ryan",
+        image: "https://picsum.photos/200",
+        frameImageUri: Image.resolveAssetSource(
+          require("@/assets/frames/white-frame.png")
+        ).uri,
+      },
+      {
+        id: "2",
+        title: "Virgil Abloh",
+        artist: "Saint Levan",
+        image: "https://picsum.photos/200",
+        frameImageUri: Image.resolveAssetSource(
+          require("@/assets/frames/red-frame.png")
+        ).uri,
+      },
+      // {
+      //   id: "3",
+      //   title: "Moodeng",
+      //   artist: "Oma Anabogu",
+      //   image: "https://picsum.photos/200",
+      // },
+      // {
+      //   id: "4",
+      //   title: "Obsession",
+      //   artist: "Halima Starr",
+      //   image: "https://picsum.photos/200",
+      // },
+    ];
+
+    setFrames(fetchedFrames);
+
+    // Initialize refs based on fetched frames
+    const newRefs: FrameRefs = fetchedFrames.reduce((acc: FrameRefs, frame) => {
+      acc[frame.id] = createRef<View>();
+      return acc;
+    }, {});
+    refs.current = newRefs; // Update the refs with new data
+  };
+
+  // Fetch frames on component mount
+  useEffect(() => {
+    fetchFrames();
+    //select the first
+    handleSelectFrame("1");
+  }, []);
+
+  // Screenshot the view and get the uri
+  const onSaveImageAsync = async (ref: React.RefObject<View>) => {
+    try {
+      const localUri = await captureRef(ref, {
+        height: 300,
+        quality: 1,
+      });
+      setSelectedImageUri(localUri);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleSelectFrame = (frameId: string) => {
+    setSelectedFrame(frameId);
+    // Access the ref of the selected frame
+    const selectedFrameRef = refs.current[frameId];
+    if (selectedFrameRef?.current) {
+      // Perform actions with the selected frame ref
+      console.log(`Selected frame: ${frameId}`);
+      // onSaveImageAsync(selectedFrameRef);
+    }
   };
 
   return (
@@ -212,13 +286,19 @@ export default function FramesSelectionScreen() {
                     styles.frameItem,
                     selectedFrame === frame.id && styles.selectedFrame,
                   ]}
-                  onPress={() => setSelectedFrame(frame.id)}
+                  onPress={() => handleSelectFrame(frame.id)}
                 >
-                  <View style={styles.frameImageContainer}>
-                    <Image
+                  {/* <Image
                       source={{ uri: image as string }}
                       style={styles.frameImage}
-                    />
+                    /> */}
+                  <View style={styles.frameImageContainer}>
+                    <View ref={refs.current[frame.id]} collapsable={false}>
+                      <CompositeImage
+                        imageSource={image as string}
+                        frameSource={frame.frameImageUri}
+                      />
+                    </View>
                   </View>
                   <View style={styles.frameInfo}>
                     <Text style={styles.frameTitle}>{frame.title}</Text>
