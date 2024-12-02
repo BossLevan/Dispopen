@@ -137,7 +137,7 @@ export const pinFileToPinata = onCall(async (request) => {
     const res = await fetch(`data:image/jpeg;base64,${request.data.file}`);
     const blob = new Blob([await res.blob()]);
     logger.info(blob)
-    const file = new File([blob], request.data.name, { type: "image/jpeg" });
+    const file = new File([blob], request.data.name, { type: "image/png" });
     const result: PinResponse = await pinata.upload.file(file)
 
     logger.info(result);

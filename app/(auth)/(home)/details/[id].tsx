@@ -49,7 +49,7 @@ export default function NFTModalScreen() {
     if (dispopen) {
       console.log("Dispopen state updated:", dispopen);
     }
-  }, [dispopen]);
+  }, []);
 
   const fetchDispopen = async (id: string) => {
     try {
@@ -227,7 +227,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     aspectRatio: 1,
-    width: "80%",
+    width: "100%",
+    objectFit: "fill",
     alignSelf: "center",
     backgroundColor: "#F2F2F7",
     borderRadius: 6,

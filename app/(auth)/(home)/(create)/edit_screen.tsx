@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import * as MediaLibrary from "expo-media-library";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
@@ -22,11 +23,21 @@ import { BadgeCheck, Clock, X } from "lucide-react-native";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 
+import { Dimensions } from "react-native";
+
 //zora imports
 import { useZoraTokenCreation } from "@/hooks/useZora";
+import {
+  CompositeImage,
+  CompositeImageProps,
+  CompositeImageRef,
+} from "@/components/CompositeImage";
 
 export default function FramesSelectionScreen() {
   const [selectedFrame, setSelectedFrame] = useState("1");
+  const [exportedImageUri, setExportedImageUri] = useState<string>("");
+  // const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+
   const [title, setTitle] = useState("");
   const [ticker, setTicker] = useState("");
   const [isTickerModalVisible, setTickerModalVisible] = useState(false);
@@ -43,32 +54,93 @@ export default function FramesSelectionScreen() {
     createTokenOnExistingContract,
   } = useZoraTokenCreation();
 
-  const frames = [
+  const compositeImageRef = useRef<CompositeImageRef>(null);
+  // const frames = [
+  //   {
+  //     id: "1",
+  //     title: "Ethereal",
+  //     artist: "Jessica Ryan",
+  //     image: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     id: "2",
+  //     title: "Virgil Abloh",
+  //     artist: "Saint Levan",
+  //     image: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     id: "3",
+  //     title: "Moodeng",
+  //     artist: "Oma Anabogu",
+  //     image: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     id: "4",
+  //     title: "Obsession",
+  //     artist: "Halima Starr",
+  //     image: "https://picsum.photos/200",
+  //   },
+  // ];
+  // Get the device width
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
+
+  // Calculate frame size based on available width (assuming 50% width minus padding)
+  const containerPadding = 12; // Total padding between items
+  const frameItemWidth = (screenWidth - containerPadding * 3) / 2; // 50% width of the screen with padding
+  const frameItemHeight = (screenHeight - containerPadding * 3) / 3; // 50% height of the screen with padding
+  const frameSize = frameItemWidth; // Frame size should match container width for a square frame
+
+  const frames: Omit<CompositeImageProps, "selectedImage" | "onExport">[] = [
     {
       id: "1",
-      title: "Ethereal",
-      artist: "Jessica Ryan",
-      image: "https://picsum.photos/200",
+      frameImageUri: Image.resolveAssetSource(
+        require("@/assets/frames/white-frame.png")
+      ).uri,
+      title: "Classic",
+      artist: "Kosi Anyaegbuna",
+      frameSize: frameSize,
     },
     {
       id: "2",
-      title: "Virgil Abloh",
-      artist: "Saint Levan",
-      image: "https://picsum.photos/200",
+      frameImageUri: Image.resolveAssetSource(
+        require("@/assets/frames/black-frame.png")
+      ).uri,
+      title: "Dystopian",
+      artist: "Reggie James",
+      frameSize: frameSize,
     },
-    {
-      id: "3",
-      title: "Moodeng",
-      artist: "Oma Anabogu",
-      image: "https://picsum.photos/200",
-    },
-    {
-      id: "4",
-      title: "Obsession",
-      artist: "Halima Starr",
-      image: "https://picsum.photos/200",
-    },
+    // {
+    //   id: "3",
+    //   frameImageUri: Image.resolveAssetSource(
+    //     require("@/assets/frames/white-frame.png")
+    //   ).uri,
+    //   title: "Classic",
+    //   artist: "Kosi Anyaegbuna",
+    //   frameSize: frameSize,
+    // },
+    // {
+    //   id: "4",
+    //   frameImageUri: Image.resolveAssetSource(
+    //     require("@/assets/frames/white-frame.png")
+    //   ).uri,
+    //   title: "Classic",
+    //   artist: "Kosi Anyaegbuna",
+    //   frameSize: frameSize,
+    // },
+    // Add more frames as needed
   ];
+
+  const handleExport = (uri: string) => {
+    setExportedImageUri(uri);
+    console.log("Exported image URI:", uri);
+    // console.log("export:", exportedImageUri);
+    // sendToServer(uri);
+    MediaLibrary.saveToLibraryAsync(uri);
+    if (uri) {
+      alert("Saved!");
+    }
+  };
 
   useEffect(() => {
     if (isTickerModalVisible) {
@@ -119,16 +191,29 @@ export default function FramesSelectionScreen() {
     setTickerModalVisible(false);
   };
 
-  const handleDone = async () => {
-    const result = await sendFileToPinata(image as string, title);
-    const address = await createToken(title, result as string, ticker);
-    console.log(address);
+  const handleExternalExport = async () => {
+    if (compositeImageRef.current) {
+      console.log(compositeImageRef.current);
+      try {
+        const uri = await compositeImageRef.current.exportImage();
+        console.log("Externally exported image URI:", exportedImageUri);
+      } catch (error) {
+        console.error("Failed to export image:", error);
+      }
+    }
+  };
 
+  const handleDone = async () => {
+    handleExternalExport();
+    // console.log("exportedd:", exportedImageUri);
+    // const result = await sendFileToPinata(exportedImageUri, title);
+    // const address = await createToken(title, result as string, ticker);
+    // console.log(address);
     // const res = await createToken(
     //   title,
     //   "ipfs://bafybeibovhytxia2dfcibkiqtzofdd5euv4q4r6r4s4gv5zmrgqntzd2sy"
     // );
-    console.log(result);
+    // console.log(result);
     router.back();
   };
 
@@ -144,7 +229,6 @@ export default function FramesSelectionScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <SafeAreaView style={styles.container}>
           <StatusBar style="dark" />
-
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleCancel}>
@@ -154,7 +238,6 @@ export default function FramesSelectionScreen() {
               <Text style={styles.doneButton}>Done</Text>
             </TouchableOpacity>
           </View>
-
           {/* Title Input Area */}
           <View style={styles.titleContainer}>
             <View style={styles.placeholderImage}>
@@ -193,7 +276,6 @@ export default function FramesSelectionScreen() {
               )}
             </View>
           </View>
-
           {/* Frames Section */}
           <View style={styles.framesSection}>
             <Text style={styles.framesTitle}>Frames</Text>
@@ -201,9 +283,8 @@ export default function FramesSelectionScreen() {
               Designed exclusively by talented artists
             </Text>
           </View>
-
           {/* Frames Grid */}
-          <ScrollView style={styles.scrollView}>
+          {/* <ScrollView style={styles.scrollView}>
             <View style={styles.grid}>
               {frames.map((frame) => (
                 <TouchableOpacity
@@ -230,8 +311,44 @@ export default function FramesSelectionScreen() {
                 </TouchableOpacity>
               ))}
             </View>
-          </ScrollView>
+          </ScrollView> */}
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.grid}>
+              {frames.map((frame) => (
+                <TouchableOpacity
+                  key={frame.id}
+                  style={[
+                    styles.frameItem,
+                    selectedFrame === frame.id && styles.selectedFrame,
+                    // { width: frameItemWidth, height: frameItemWidth }, // Ensure container is square
+                  ]}
+                  onPress={() => {
+                    setSelectedFrame(frame.id);
+                  }}
+                >
+                  <View style={styles.frameImageContainer}>
+                    <CompositeImage
+                      {...frame}
+                      ref={compositeImageRef}
+                      selectedImage={image as string}
+                      onExport={handleExport}
+                      frameImageUri={frame.frameImageUri}
+                      frameSize={frameItemWidth} // Dynamically set frame size
+                    />
+                  </View>
 
+                  {/* Frame Info */}
+                  <View style={styles.frameInfo}>
+                    <Text style={styles.frameTitle}>{frame.title}</Text>
+                    <View style={styles.artistContainer}>
+                      <Text style={styles.artistName}>{frame.artist}</Text>
+                      <BadgeCheck fill="#61A0FF" stroke="#fff" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
           {/* Ticker Modal */}
           {isTickerModalVisible && (
             <Animated.View
@@ -281,7 +398,7 @@ export default function FramesSelectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
   },
   header: {
     flexDirection: "row",
@@ -371,36 +488,38 @@ const styles = StyleSheet.create({
     color: "#8E8E93",
     fontFamily: "CabinetGrotesk-Medium",
   },
+
   scrollView: {
     flex: 1,
   },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 8,
+    paddingLeft: 12,
   },
   frameItem: {
-    width: "50%",
-    padding: 12,
-    marginBottom: 12,
+    aspectRatio: 1, // Makes sure the container remains a square
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "transparent",
+    // marginBottom: 12,
   },
   selectedFrame: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "#F27F65",
     borderRadius: 5,
   },
   frameImageContainer: {
-    aspectRatio: 1,
+    flex: 1,
+    position: "relative",
     backgroundColor: "#F2F2F7",
-    borderRadius: 4,
+    borderRadius: 8,
     overflow: "hidden",
   },
-  frameImage: {
-    width: "100%",
-    height: "100%",
-  },
   frameInfo: {
-    marginTop: 8,
+    marginTop: -4,
+    marginBottom: 12,
+    paddingLeft: 16,
   },
   frameTitle: {
     fontSize: 17,
@@ -417,6 +536,17 @@ const styles = StyleSheet.create({
     fontFamily: "CabinetGrotesk-Medium",
     color: "#8E8E93",
     marginRight: 4,
+  },
+  checkIndicator: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "white",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
