@@ -23,17 +23,19 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import { getAddress } from "viem";
 
 //zora imports
 import { useZoraTokenCreation } from "@/hooks/useZora";
 import CompositeImage from "@/components/CompositeImage";
+import { apiService } from "@/api/api";
 
 type Frame = {
   id: string;
   title: string;
-  artist: string;
-  image: string;
-  frameImageUri: string;
+  artist_name: string;
+  artist_address: string;
+  frame_image_url: string;
 };
 
 type FrameRefs = {
@@ -41,6 +43,7 @@ type FrameRefs = {
 };
 
 export default function FramesSelectionScreen() {
+  //it can actually use random id's now so you can refactor if you want
   const [selectedFrame, setSelectedFrame] = useState("1");
   const [title, setTitle] = useState("");
   const [selectedImageUri, setSelectedImageUri] = useState("");
@@ -53,6 +56,8 @@ export default function FramesSelectionScreen() {
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   const [frames, setFrames] = useState<Frame[]>([]);
+  const [selectedFrameRef, setSelectedFrameRef] =
+    useState<React.RefObject<View>>();
   const refs = useRef<FrameRefs>({});
 
   const {
@@ -60,6 +65,7 @@ export default function FramesSelectionScreen() {
     getToken,
     createToken,
     createTokenOnExistingContract,
+    getSplitAddress,
   } = useZoraTokenCreation();
 
   useEffect(() => {
@@ -112,8 +118,21 @@ export default function FramesSelectionScreen() {
   };
 
   const handleMinting = async () => {
-    const result = await sendFileToPinata(selectedImageUri as string, title);
-    const address = await createToken(title, result as string, ticker);
+    const splitAddress = await getSplitAddress(
+      frames.find((frame) => frame.id === selectedFrame)?.artist_address!
+    );
+    const result = await sendFileToPinata(
+      selectedImageUri as string,
+      title,
+      frames.find((frame) => frame.id === selectedFrame)?.artist_name!,
+      frames.find((frame) => frame.id === selectedFrame)?.title!
+    );
+    const address = await createToken(
+      title,
+      result as string,
+      splitAddress,
+      ticker
+    );
     console.log(address);
     router.back();
   };
@@ -125,6 +144,7 @@ export default function FramesSelectionScreen() {
   }, [selectedImageUri]); // This runs every time `selectedImageUri` changes
 
   const handleDone = async () => {
+    console.log(refs.current[selectedFrame]);
     await onSaveImageAsync(refs.current[selectedFrame]);
   };
 
@@ -135,40 +155,9 @@ export default function FramesSelectionScreen() {
   // Function to simulate fetching frames from a server
   const fetchFrames = async () => {
     // Simulated API call
-    // Let your API start id's with 1 etc
-    const fetchedFrames = [
-      {
-        id: "1",
-        title: "Ethereal",
-        artist: "Jessica Ryan",
-        image: "https://picsum.photos/200",
-        frameImageUri: Image.resolveAssetSource(
-          require("@/assets/frames/white-frame.png")
-        ).uri,
-      },
-      {
-        id: "2",
-        title: "Virgil Abloh",
-        artist: "Saint Levan",
-        image: "https://picsum.photos/200",
-        frameImageUri: Image.resolveAssetSource(
-          require("@/assets/frames/red-frame.png")
-        ).uri,
-      },
-      // {
-      //   id: "3",
-      //   title: "Moodeng",
-      //   artist: "Oma Anabogu",
-      //   image: "https://picsum.photos/200",
-      // },
-      // {
-      //   id: "4",
-      //   title: "Obsession",
-      //   artist: "Halima Starr",
-      //   image: "https://picsum.photos/200",
-      // },
-    ];
-
+    // Let your API start id's with 1 etc for selection ease, can refactor later
+    //wrap with try and catch
+    const fetchedFrames = await apiService.fetchFrames();
     setFrames(fetchedFrames);
 
     // Initialize refs based on fetched frames
@@ -181,10 +170,20 @@ export default function FramesSelectionScreen() {
 
   // Fetch frames on component mount
   useEffect(() => {
-    fetchFrames();
-    //select the first
-    handleSelectFrame("1");
+    const initializeFrames = async () => {
+      await fetchFrames(); // Wait for fetchFrames to complete
+      console.log("frames", frames);
+    };
+    initializeFrames(); // Call the async function
   }, []);
+
+  //Select first frame as initial
+  useEffect(() => {
+    if (frames && frames.length > 0) {
+      handleSelectFrame(frames[0].id); // Safely select the first frame
+      console.log("Selected frame on start", frames[0].id);
+    }
+  }, [frames]);
 
   // Screenshot the view and get the uri
   const onSaveImageAsync = async (ref: React.RefObject<View>) => {
@@ -195,7 +194,7 @@ export default function FramesSelectionScreen() {
       });
       setSelectedImageUri(localUri);
     } catch (e) {
-      console.log(e);
+      console.log("error", e);
     }
   };
 
@@ -203,12 +202,17 @@ export default function FramesSelectionScreen() {
     setSelectedFrame(frameId);
     // Access the ref of the selected frame
     const selectedFrameRef = refs.current[frameId];
+    setSelectedFrameRef(selectedFrameRef);
+  };
+
+  //runs each time a frame is selected
+  useEffect(() => {
     if (selectedFrameRef?.current) {
       // Perform actions with the selected frame ref
-      console.log(`Selected frame: ${frameId}`);
+      console.log(`Selected frame: ${selectedFrame}`);
       // onSaveImageAsync(selectedFrameRef);
     }
-  };
+  }, [selectedFrameRef]);
 
   return (
     <KeyboardAvoidingView
@@ -296,14 +300,14 @@ export default function FramesSelectionScreen() {
                     <View ref={refs.current[frame.id]} collapsable={false}>
                       <CompositeImage
                         imageSource={image as string}
-                        frameSource={frame.frameImageUri}
+                        frameSource={frame.frame_image_url}
                       />
                     </View>
                   </View>
                   <View style={styles.frameInfo}>
                     <Text style={styles.frameTitle}>{frame.title}</Text>
                     <View style={styles.artistContainer}>
-                      <Text style={styles.artistName}>{frame.artist}</Text>
+                      <Text style={styles.artistName}>{frame.artist_name}</Text>
                       <BadgeCheck fill="#61A0FF" stroke="#fff" />
                     </View>
                   </View>

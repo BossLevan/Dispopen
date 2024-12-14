@@ -26,6 +26,8 @@ import { apiService, ZoraCreateTokenResponse } from "@/api/api";
 import LoadingSkeleton from "@/components/loadingSkeleton";
 import { formatCountdown } from "@/utils/time";
 import { formatUnixTimestamp } from "@/utils/date";
+import { parseRawJson } from "@/utils/parseRawJson";
+import { MintModal } from "@/components/MintModal";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();
@@ -37,6 +39,8 @@ export default function NFTModalScreen() {
   );
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
+  // In your component:
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     if (tokenId) {
@@ -109,7 +113,6 @@ export default function NFTModalScreen() {
         bounces={scrollPosition.current <= 0} // Only bounce when at top
       >
         <View style={styles.header} />
-
         <View style={styles.imageContainer}>
           {!isLoading ? (
             <Image
@@ -123,7 +126,6 @@ export default function NFTModalScreen() {
             <ActivityIndicator size="large" color="#0000ff" /> // Fallback UI while image is loading or unavailable
           )}
         </View>
-
         <View style={styles.artistInfoHeader}>
           <View>
             <Text style={styles.title}>
@@ -138,8 +140,11 @@ export default function NFTModalScreen() {
                 />
               </View>
               <Text style={styles.artistName}>
-                <Text style={styles.artistNameBold}>Virgil Abloh</Text> by Jack
-                Butcher
+                <Text style={styles.artistNameBold}>
+                  {parseRawJson(dispopen?.metadata.rawJson!).frameName ??
+                    "Default"}
+                </Text>{" "}
+                by {`${parseRawJson(dispopen?.metadata.rawJson!).artistName}`}
               </Text>
               <BadgeCheck fill="#61A0FF" stroke="#fff" />
             </View>
@@ -148,13 +153,11 @@ export default function NFTModalScreen() {
             <Ionicons name="ellipsis-horizontal" size={24} color="black" />
           </TouchableOpacity>
         </View>
-
         <View style={styles.creationInfo}>
           <Text style={styles.creationDate}>
             Created on {formatUnixTimestamp(dispopen?.timestamp!)}
           </Text>
         </View>
-
         <View style={styles.mintInfo}>
           <View style={styles.mintRow}>
             <Text style={styles.mintLabel}>Mints</Text>
@@ -177,16 +180,23 @@ export default function NFTModalScreen() {
             </Text>
           </View>
         </View>
-
         <Text style={styles.disclaimer}>
           This dispopen is listed on zora and minted on the base network. Owned
           by you. <Text style={styles.learnMore}>Learn more</Text>
         </Text>
+        <MintModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          tokenContract={dispopen?.address as `0x${string}`}
+        />
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.shareButton}>
-          <Text style={styles.shareButtonText}>Share</Text>
+        <TouchableOpacity
+          style={styles.shareButton}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <Text style={styles.shareButtonText}>Mint</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -227,7 +237,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     aspectRatio: 1,
-    width: "80%",
+    width: "90%",
     alignSelf: "center",
     backgroundColor: "#F2F2F7",
     borderRadius: 6,
@@ -236,7 +246,7 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 15,
     // Android shadow (elevation)
     elevation: 10, // Adjust as necessary
@@ -333,6 +343,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
+    // position: "absolute",
+    // // bottom: 0,
     borderTopWidth: 1,
     borderTopColor: "#E5E5EA",
   },

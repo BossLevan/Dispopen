@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-    "module": "ESNext",                // Use ESM modules
-    "target": "ES2020",                // Target modern JavaScript
-    "lib": ["ES2020"],
+    "target": "ES2015",
+    "module": "ES2015",
     "moduleResolution": "Node",
-    "outDir": "lib",                   // Output directory for compiled JS
-    "sourceMap": true,
-    "esModuleInterop": true,           // Enable ES Module interop
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": false
+    "esModuleInterop": true,
+    "skipLibCheck": true, // Skip library type checking (to ignore TypeScript errors in node_modules)
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

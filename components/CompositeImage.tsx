@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   innerImageWrapper: {
-    width: "60%", // Inner image width relative to the container
-    height: "60%", // Inner image height relative to the container
+    width: "50%", // Inner image width relative to the container
+    height: "50%", // Inner image height relative to the container
     alignItems: "center",
     justifyContent: "center",
   },

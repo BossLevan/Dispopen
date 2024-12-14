@@ -27,6 +27,7 @@ import { createPublicClient, http, Chain, createWalletClient } from "viem";
 import FormData from 'form-data';
 import * as FileSystem from 'expo-file-system';
 import { config } from "@/wallet-config"
+import { myWalletAddress } from "@/constants/constants";
 
 type Metadata = {
   metadataUrl: string
@@ -37,9 +38,11 @@ export function useZoraTokenCreation() {
   const functions = getFunctions(firebaseApp);
   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   const pinFileToPinata = httpsCallable<any>(functions, "pinFileToPinata");
+  const getSplitsAddress = httpsCallable<any>(functions, "getSplitsAddress");
   const [metadataUrl, setMetadataUrl] = useState<string | null>(null);
   const [id, setId] = useState<string | undefined>(undefined);
   const [provider, setProvider] = useState<any>(null);
+  let [walletClient, setWalletClient] = useState<any>()
   const configg = useConfig()
   const publicClient = createPublicClient({
     chain: baseSepolia as Chain,
@@ -50,16 +53,17 @@ export function useZoraTokenCreation() {
     chainId: baseSepolia.id,
     publicClient,
   });
-  let walletClient: any
 
   useEffect(() => {
     const fetchProvider = async () => {
       const provider = await config.connectors[0].getProvider()
+      setProvider(provider)
 
       walletClient = createWalletClient({
         chain: baseSepolia,
         transport: custom(provider as any),
       });
+      setWalletClient(walletClient)
     }
     fetchProvider()
   }, [])
@@ -118,8 +122,8 @@ export function useZoraTokenCreation() {
     return manipulatedImage.uri;
   };
 
-
-  const sendFileToPinata = useCallback(async (image: string, dispopenTitle: string) => {
+; 
+  const sendFileToPinata = useCallback(async (image: string, dispopenTitle: string, artist_name: string, frame_name: string) => {
     // Read the file as base64
     const base64 = await FileSystem.readAsStringAsync(image, {
       encoding: FileSystem.EncodingType.Base64
@@ -130,9 +134,9 @@ export function useZoraTokenCreation() {
       const result = await pinFileToPinata({
         file: base64,
         name: dispopenTitle, // You might want to allow the user to input this 
-        attributes: {
-          trait_type: "artist",
-          value: "John Doe", // You might want to allow the user to input this
+        frame: {
+          artist_name: artist_name,
+          frame_name: frame_name, // You might want to allow the user to input this
         },
       });
       let realResult = result.data as unknown as Metadata
@@ -146,6 +150,20 @@ export function useZoraTokenCreation() {
       console.error('Error uploading to Pinata:', error);
     }
   }, [pinFileToPinata]);
+
+
+
+
+  const getSplitAddress = useCallback(async (artistAddress: string) => {
+    const result = await getSplitsAddress({
+      creatorAddress: address,
+      artistAddress: artistAddress
+    }) as any
+    console.log(result.data)
+    return result.data.splitRecipient as string;
+  }, [getSplitsAddress]);
+
+
 
 
 
@@ -180,8 +198,8 @@ export function useZoraTokenCreation() {
     return {};
   }, [availableCapabilities, account.chainId]);
 
-  const createToken = useCallback(async (contractName: string, tokenMetadataUri: string, ticker?: string) => {
-    try {
+  const createToken = useCallback(async (contractName: string, tokenMetadataUri: string, splitRecipient: string, ticker?: string) => {
+    try { 
       const { parameters, contractAddress } = await creatorClient.create1155({
         // the contract will be created at a deterministic address
         contract: {
@@ -193,6 +211,7 @@ export function useZoraTokenCreation() {
         },
         token: {
           tokenMetadataURI: tokenMetadataUri,
+          payoutRecipient: splitRecipient as `0x${string}`,
           createReferral: "0xdd59a87E011CAe37f479900F7275c3b45d954505",
           salesConfig: {
             // Symbol of the erc20z token to create for the secondary sale.  If not provided, extracts it from the name.
@@ -282,11 +301,42 @@ export function useZoraTokenCreation() {
 
 
   collectorClient.getTokensOfContract
+
+  const mint = useCallback(async (tokenContract: `0x${string}`, quantity: number) => {
+    try {
+      const { parameters } = await collectorClient.mint({
+        // 1155 contract address
+        tokenContract: tokenContract,
+        // type of item to mint
+        mintType: "1155", 
+        // 1155 token id to mint
+        tokenId: 1n, 
+        // quantity of tokens to mint
+        quantityToMint: quantity,
+        // optional address that will receive a mint referral reward
+        mintReferral: myWalletAddress,
+        // account that is to invoke the mint transaction
+        minterAccount: address!,
+      });
+  
+      // simulate the transaction
+      // const { request } = await publicClient.simulateContract(parameters);
+      const hash = await walletClient.writeContract(parameters)
+      // const hash = await writeContract(configg, request)
+      return {hash}
+    } catch (e) {
+      console.log('error', e)
+      return {e}
+    }
+     
+  }, [collectorClient]);
   return {
     sendFileToPinata,
     getToken,
     createToken,
+    getSplitAddress,
     createTokenOnExistingContract,
     id,
+    mint
   };
 }
