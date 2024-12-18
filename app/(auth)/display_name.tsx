@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useState, useRef } from "react";
 import {
   View,
@@ -10,18 +11,23 @@ import {
   Keyboard,
   Animated,
 } from "react-native";
-
+import * as Storage from "@/utils/storage_visit_name";
+import { useSession } from "@/components/ctx";
 export default function DisplayNameScreen() {
   const [displayName, setDisplayName] = useState("");
+  const { setSession } = useSession();
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const onPressIn = () => {
+  const onPressIn = async () => {
     Animated.spring(scaleAnim, {
       toValue: 0.95,
       useNativeDriver: true,
     }).start();
+    router.replace("/(auth)/(home)/home");
+    setSession();
+    console.log("set to true");
   };
 
   const onPressOut = () => {

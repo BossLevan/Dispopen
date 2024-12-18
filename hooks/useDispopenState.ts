@@ -1,7 +1,8 @@
 // hooks/useImageState.ts
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { apiService, Token } from "@/api/api";
+import { apiService } from "@/api/api";
+import { Token } from "@/constants/types";
 
 
 export const useImageState = (address: string | undefined) => {

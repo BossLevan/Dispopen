@@ -1,4 +1,9 @@
-import { useContext, createContext, type PropsWithChildren } from "react";
+import {
+  useContext,
+  createContext,
+  type PropsWithChildren,
+  useState,
+} from "react";
 import { useStorageState } from "../hooks/useStorageState";
 import { useLogin, usePrivy } from "@privy-io/expo";
 import { useRouter } from "expo-router";
@@ -8,11 +13,17 @@ const AuthContext = createContext<{
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
+  isPrivyLoading: boolean;
+  signInPrivy?: string | null;
+  setSession: () => void;
 }>({
   signIn: () => null,
   signOut: () => null,
   session: null,
   isLoading: false,
+  isPrivyLoading: false,
+  signInPrivy: null,
+  setSession: () => null,
 });
 
 // This hook can be used to access the user info.
@@ -33,6 +44,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const router = useRouter();
 
   const [[isLoading, session], setSession] = useStorageState("session");
+  // Local state for `signInPrivy`
+  const [[isPrivyLoading, signInPrivy], setSignInPrivy] =
+    useStorageState("privy");
 
   return (
     <AuthContext.Provider
@@ -41,8 +55,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           login({ loginMethods: ["email"] })
             .then((session) => {
               console.log("User logged in", session.user);
-              setSession("xxx");
-
+              setSignInPrivy("true");
               //handle errors
             })
             .catch((e) => console.log(e));
@@ -50,9 +63,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
         signOut: () => {
           logout();
           setSession(null);
+          setSignInPrivy(null);
         },
         session,
         isLoading,
+        signInPrivy,
+        isPrivyLoading,
+        setSession: () => {
+          setSession("xxx");
+          console.log("session set");
+        },
       }}
     >
       {children}

@@ -5,10 +5,39 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Button,
 } from "react-native";
 import { Camera, ImageIcon, BarChart3 } from "lucide-react-native";
+import { useStorageState } from "@/hooks/useStorageState";
+import { router } from "expo-router";
+import { useWallet } from "@/hooks/useWallet";
 
 export default function IntroModal({ onContinue }: { onContinue: () => void }) {
+  const [[hasSeenIntroLoading, hasSeenIntro], setHasSeenIntro] =
+    useStorageState("hasSeenIntro");
+
+  const {
+    connectWallet,
+    handleGenerateMessage,
+    handleSignMessage,
+    handleDisconnect,
+    linkWallet,
+    message,
+    linked,
+    privyUser,
+  } = useWallet();
+
+  async function handleClose() {
+    try {
+      await connectWallet();
+      console.log("im not waiting ooo");
+      setHasSeenIntro("true");
+      router.back();
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+      // Optionally, you can show an error message to the user here
+    }
+  }
   const steps = [
     {
       icon: Camera,
@@ -47,11 +76,22 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
             </View>
           ))}
         </View>
+
+        {/* <Button title="Generate Message" onPress={handleGenerateMessage} />
+        <Button title="Disconnect" onPress={handleDisconnect} /> */}
+        {/* 
+        {Boolean(message) && <Text>{message as string}</Text>} */}
+
+        {/* {Boolean(message) && (
+          <Button title="Sign Message" onPress={handleSignMessage} />
+        )}
+        <Button title="Connect Wallet" onPress={connectWallet} />
+        <Button title="Link Wallet with Privy" onPress={linkWallet} /> */}
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.continueButton} onPress={onContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
+        <TouchableOpacity style={styles.continueButton} onPress={handleClose}>
+          <Text style={styles.continueButtonText}>Connect Wallet</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -74,6 +114,8 @@ const styles = StyleSheet.create({
     fontFamily: "CabinetGrotesk-Extrabold",
     fontWeight: "bold",
     marginBottom: 40,
+    justifyContent: "center",
+    alignSelf: "center",
   },
   stepsContainer: {
     gap: 32,
@@ -119,7 +161,7 @@ const styles = StyleSheet.create({
   continueButtonText: {
     color: "#fff",
     fontSize: 17,
-    fontFamily: "CabinetGrotesk-Medium",
+    fontFamily: "CabinetGrotesk-Bold",
     fontWeight: "600",
   },
 });

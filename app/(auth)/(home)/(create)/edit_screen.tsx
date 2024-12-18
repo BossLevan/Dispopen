@@ -29,14 +29,7 @@ import { getAddress } from "viem";
 import { useZoraTokenCreation } from "@/hooks/useZora";
 import CompositeImage from "@/components/CompositeImage";
 import { apiService } from "@/api/api";
-
-type Frame = {
-  id: string;
-  title: string;
-  artist_name: string;
-  artist_address: string;
-  frame_image_url: string;
-};
+import { Frame } from "@/constants/types";
 
 type FrameRefs = {
   [key: string]: React.RefObject<View>;

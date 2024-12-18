@@ -23,7 +23,16 @@ export const DispopenCard: React.FC<DispopenCardProps> = ({
       <Image source={{ uri: image }} style={styles.dispopenImage} />
     </View>
     <View style={styles.progressContainer}>
-      <View style={[styles.progressBar, { width: `${progress}%` }]} />
+      <View
+        style={[
+          styles.progressBar,
+          {
+            width: `${
+              progress != (0 * 100) / 1111 ? progress : (20 * 100) / 1111
+            }%`,
+          }, //eveything over 1111 tokens (default graduation mint)
+        ]}
+      />
     </View>
     <Text style={styles.progressText}>{progress}%</Text>
   </View>

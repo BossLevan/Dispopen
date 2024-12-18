@@ -22,12 +22,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { convertIpfsToPinataUrl } from "@/utils/ipfs";
 import { useZoraTokenCreation } from "@/hooks/useZora";
-import { apiService, ZoraCreateTokenResponse } from "@/api/api";
+import { apiService } from "@/api/api";
 import LoadingSkeleton from "@/components/loadingSkeleton";
 import { formatCountdown } from "@/utils/time";
 import { formatUnixTimestamp } from "@/utils/date";
 import { parseRawJson } from "@/utils/parseRawJson";
 import { MintModal } from "@/components/MintModal";
+import { ZoraCreateTokenResponse } from "@/constants/types";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();

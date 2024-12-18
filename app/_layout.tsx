@@ -13,19 +13,16 @@ import React from "react";
 import { handleResponse } from "@mobile-wallet-protocol/client";
 import * as Linking from "expo-linking";
 import { Text } from "react-native";
+import * as Storage from "@/utils/storage_visit_name";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import LoadingSkeleton from "@/components/loadingSkeleton";
+import { useNavigationLogic } from "@/hooks/useNavigation";
 
 const queryClient = new QueryClient();
 // SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  // useFonts({
-  //   Inter_400Regular,
-  //   Inter_500Medium,
-  //   Inter_600SemiBold,
-  // });
-
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     "CabinetGrotesk-Black": require("@/assets/fonts/CabinetGrotesk-Black.otf"),
     "CabinetGrotesk-Bold": require("@/assets/fonts/CabinetGrotesk-Bold.otf"),
     "CabinetGrotesk-Extrabold": require("@/assets/fonts/CabinetGrotesk-Extrabold.otf"),
@@ -33,17 +30,19 @@ function RootLayoutNav() {
     "CabinetGrotesk-Regular": require("@/assets/fonts/CabinetGrotesk-Regular.otf"),
   });
 
-  const { session, isLoading } = useSession();
+  const { session, isLoading, signInPrivy, isPrivyLoading } = useSession();
   const segments = useSegments();
   const router = useRouter();
-  const [visitedDisplayName, setVisitedDisplayName] = useState(false);
+  const [hasVisitedDisplayName, setHasVisitedDisplayName] = useState<
+    boolean | null
+  >(false);
 
   useEffect(() => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
-      console.log("incoming deeplink:", url);
+      console.log("Incoming deeplink:", url);
       try {
         handleResponse(url);
-        router.back(); // Need this to work with expo router
+        router.back();
       } catch (err) {
         console.error(err);
       }
@@ -53,49 +52,20 @@ function RootLayoutNav() {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
-    console.log(isLoading);
-    console.log(session);
-    const inAuthGroup = segments[0] === "(auth)";
-    const inDisplayName = segments[1] === "display_name";
-    const isAlreadyOnTargetPage = (target: string) =>
-      segments.join("/") === target;
-    // router.replace("/(home)");
-    if (session && !isAlreadyOnTargetPage("(auth)/(home)")) {
-      console.log("authenticated, redirecting to home");
-      router.replace("/(auth)/(home)");
-    } else if (!session && !isAlreadyOnTargetPage("login")) {
-      console.log("Not authenticated, redirecting to login");
-      router.replace("/login");
-    }
-    // else if (session && inAuthGroup && !visitedDisplayName) {
-    //   console.log("Authenticated, redirecting to display name");
-    //   router.replace("/(auth)/display_name");
-    //   setVisitedDisplayName(true);
-    // } else if (session && !inDisplayName) {
-    //   console.log("Authenticated, redirecting to home");
-    //   router.replace("/(home)");
-    // }
+    // const checkDisplayNameVisit = async () => {
+    //   const visited = await Storage.Storage.getItem("hasVisitedDisplayName");
+    //   setHasVisitedDisplayName(visited === "true");
+    //   console.log("dn", hasVisitedDisplayName);
+    // };
+    // checkDisplayNameVisit();
+  }, []);
 
-    // if (!session && !inAuthGroup) {
-    //   console.log("Not authenticated, redirecting to login");
-    //   router.replace("/(auth)/login");
-    //   setVisitedDisplayName(false);
-    // } else if (session && !inDisplayName && !visitedDisplayName) {
-    //   console.log("Redirecting to /display-name for the first time");
-    //   router.replace("/(auth)/display_name");
-    //   setVisitedDisplayName(true);
-    // } else if (session && visitedDisplayName && !inDisplayName) {
-    //   console.log("Redirecting to home screen after visiting /display-name");
-    //   router.replace("/(home)");
-    // }
-  }, [session]);
+  // Use the new hook
+  useNavigationLogic(session, isLoading, signInPrivy, isPrivyLoading);
 
-  if (!loaded) {
-    console.log("loaded");
-    return <Slot />; // You could return a loading spinner here if needed
+  if (isPrivyLoading || !loaded) {
+    return <LoadingSkeleton />; // Ensure a loading state is shown until navigation is ready
   }
-
   return (
     <Stack
       screenOptions={{

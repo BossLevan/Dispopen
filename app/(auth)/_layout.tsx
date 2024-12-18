@@ -11,10 +11,14 @@ export default function RootLayout() {
         }
       }
     >
-      <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+      <Stack.Screen name="(home)/home" options={{ headerShown: false }} />
       <Stack.Screen
         name="(home)/intro_modal"
-        options={{ headerShown: false, presentation: "modal" }}
+        options={{
+          headerShown: false,
+          presentation: "modal",
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen
         name="(home)/(create)/edit_screen"
