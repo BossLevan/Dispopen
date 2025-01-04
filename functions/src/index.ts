@@ -62,6 +62,7 @@ type ZoraCreateTokenResponse = {
       zoraTimedMinter: {
         erc20z: string; // Address of the ERC20 token used for sales
         marketCountdown: string;
+        secondaryActivated: boolean;
         erc20Z: {
           id: string; // ERC20 token ID
           name: string; // ERC20 token name
@@ -141,9 +142,10 @@ query GetDispopen($id: String!) {
 const ZORA_FEATURED_DISPOPENS_QUERY = gql`
 query GetFeaturedDispopens {
   zoraCreateTokens(
-    orderBy: totalMinted
+    orderBy: timestamp
     where: {metadata_: {description_contains: "dispopen"}}
-    first: 5
+    first: 3
+    orderDirection: desc
   ) {
     creator
     totalMinted
@@ -157,6 +159,17 @@ query GetFeaturedDispopens {
   
 }
 `;
+
+const ZORA_SECONDARY_ACTIVATED_QUERY = gql`
+query MyQuery($creatorAddress: String!) {
+  zoraCreateTokens(
+    where: {metadata_: {description_contains: "dispopen"}, creator: $creatorAddress}
+  ) {
+    totalMinted
+  }
+}
+`;
+
 
 
 
@@ -349,3 +362,51 @@ export const getSplitsAddress = onCall(async (request) => {
   return {splitRecipient: splitRecipient}
 })
 
+export const getGraduatedDispopensLength = onCall(async (request): Promise<number | undefined> => {
+  const address = request.data.creatorAddress
+  try {
+    const response = await client.request<{ zoraCreateTokens: Token[] }>(ZORA_SECONDARY_ACTIVATED_QUERY, { creatorAddress: address });
+    console.log('GraphQL response:', JSON.stringify(response, null, 2));
+
+    if (!response || !response.zoraCreateTokens) {
+      throw new Error('Unexpected response structure');
+    }
+
+    // Filter tokens with totalMinted > 1111
+    const filteredTokens = response.zoraCreateTokens.filter(token => {
+      const mintedAmount = Number(token.totalMinted);
+      return !isNaN(mintedAmount) && mintedAmount > 1111;
+    });
+
+    // Check if we have any tokens that meet the criteria
+    if (filteredTokens.length === 0) {
+      console.log('No tokens found with totalMinted > 1111');
+      return 0;
+    }
+
+    // Map only the filtered tokens
+    const tokens: Token[] = filteredTokens.map((token) => ({
+      creator: "",
+      maxSupply: "",
+      royalties: [],
+      uri: '',
+      totalMinted: token.totalMinted,
+      totalSupply: "",
+      id: "",
+      metadataIPFSID: "",
+      metadata: {
+        image: "",
+        name: "",
+        id: "",
+      },
+    }));
+
+    return tokens.length;
+  } catch (error) {
+    console.error('Error fetching Zora contracts:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message);
+    }
+    return undefined;
+  }
+});

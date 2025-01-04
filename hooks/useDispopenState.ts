@@ -11,7 +11,7 @@ export const useImageState = (address: string | undefined) => {
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
   const refreshTimeout = useRef<NodeJS.Timeout>();
-  const [featuredDispopens, setFeaturedDispopens] = useState<Token[]>([]);
+
 
   const fetchImages = useCallback(async (): Promise<number> => {
     if (!address) return 0;
@@ -20,12 +20,6 @@ export const useImageState = (address: string | undefined) => {
     return fetchedImages.length;
   }, [address]);
 
-  const fetchFeaturedDispopens = useCallback(async () => {
-    if (!address) return 0;
-    const fetchedImages = await apiService.getFeaturedDispopens();
-    setFeaturedDispopens(fetchedImages);
-    return fetchedImages.length;
-  }, [address]);
 
   const delayedRefresh = useCallback(async () => {
     setIsLoading(true);
@@ -66,9 +60,6 @@ export const useImageState = (address: string | undefined) => {
     }
   }, [isFocused, delayedRefresh]);
 
-  useEffect(() => {
-    fetchFeaturedDispopens()
-  }, []);
 
 
   useEffect(() => {
@@ -79,5 +70,5 @@ export const useImageState = (address: string | undefined) => {
     };
   }, []);
 
-  return { images, isLoading, refreshing, featuredDispopens, fetchImages, onRefresh, delayedRefresh };
+  return { images, isLoading, refreshing, fetchImages, onRefresh, delayedRefresh };
 };

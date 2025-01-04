@@ -3,11 +3,13 @@ import { ActionSheetIOS, Alert, Platform } from "react-native";
 import { useState } from "react";
 import { useSession } from "@/components/ctx";
 import * as Storage from "@/utils/storage_visit_name";
+import { useDisconnect } from "wagmi";
 
 export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary: () => void) => {
   const [isAndroidMenuVisible, setIsAndroidMenuVisible] = useState(false);
   const [isSettingsMenuVisible, setIsSettingsMenuVisible] = useState(false);
   const { signOut } = useSession();
+  const {disconnect} = useDisconnect()
 
   const handleFabPress = () => {
     if (Platform.OS === "ios") {
@@ -51,15 +53,19 @@ export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary:
     }
   };
 
-    const handleSignOut = () => {
-    // Implement sign out logic here
-    const signOutWell = async () =>{
+    const handleSignOut = async () => {
+
+    disconnect()
     signOut() 
     await Storage.Storage.clearStorage()
     Alert.alert("Sign Out", "You have been signed out.");
-    }
+    // Implement sign out logic here
+    // const signOutWell = async () =>{
+    // //disconnect wallet
+   
+    // }
 
-    signOutWell()
+    // signOutWell()
   };
 
   const handleDeleteAccount = () => {

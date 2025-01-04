@@ -46,3 +46,23 @@ export interface Token {
         };
       }[];
   };
+
+  export interface ContextMenuAction {
+    label: string;
+    key: string;
+    destructive?: boolean;
+    onSelect?: () => unknown;
+    actions?: ContextMenuAction[]; // These will be useful for sub groups
+    iosIconName?: string;
+    androidIconName?: string;
+  }
+  
+  export interface ContextMenuActionGroup {
+    actions: ContextMenuAction[];
+  }
+
+  export interface IProps {
+    actions: ContextMenuActionGroup[];
+    size?: number;
+    children?: React.ReactElement;
+  }

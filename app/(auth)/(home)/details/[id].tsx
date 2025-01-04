@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 // import { View, StyleSheet } from "react-native";
 import NFTModalDisplay from "@/components/NftModal"; // Adjust the import path as needed
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as DropdownMenu from "zeego/dropdown-menu";
 
 import React, { useRef, useEffect, useState } from "react";
 import {
@@ -15,6 +16,8 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ActivityIndicator,
+  Animated,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BadgeCheck } from "lucide-react-native";
@@ -29,6 +32,9 @@ import { formatUnixTimestamp } from "@/utils/date";
 import { parseRawJson } from "@/utils/parseRawJson";
 import { MintModal } from "@/components/MintModal";
 import { ZoraCreateTokenResponse } from "@/constants/types";
+import { showToast } from "@/components/Toast";
+import * as Clipboard from "expo-clipboard";
+import { dispopenZoraAddress } from "@/constants/constants";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();
@@ -42,6 +48,22 @@ export default function NFTModalScreen() {
   const [error, setError] = useState<string | null>(null); // Error state
   // In your component:
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const onPressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
 
   useEffect(() => {
     if (tokenId) {
@@ -94,6 +116,11 @@ export default function NFTModalScreen() {
   if (isLoading) {
     return <LoadingSkeleton />;
   }
+
+  const handleOnSelectContextMenuItem = async () => {
+    await Clipboard.setStringAsync(dispopenZoraAddress as string);
+    showToast("success", "Copied Link");
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* <TouchableOpacity
@@ -150,9 +177,39 @@ export default function NFTModalScreen() {
               <BadgeCheck fill="#61A0FF" stroke="#fff" />
             </View>
           </View>
-          <TouchableOpacity style={styles.moreButton}>
+
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <TouchableOpacity style={styles.moreButton}>
+                <Ionicons name="ellipsis-horizontal" size={24} color="black" />
+              </TouchableOpacity>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Content>
+              <DropdownMenu.Label>Options</DropdownMenu.Label>
+              <DropdownMenu.Item
+                key="copy dispopen link"
+                onSelect={handleOnSelectContextMenuItem}
+              >
+                <DropdownMenu.ItemTitle>
+                  Copy Dispopen link
+                </DropdownMenu.ItemTitle>
+                <DropdownMenu.ItemIcon
+                  ios={{
+                    name: "doc.on.doc.fill", // required
+                    pointSize: 15,
+                    weight: "semibold",
+                    scale: "medium",
+                    // hierarchicalColor: "#000",
+                  }}
+                ></DropdownMenu.ItemIcon>
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+
+          {/* <TouchableOpacity style={styles.moreButton}>
             <Ionicons name="ellipsis-horizontal" size={24} color="black" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.creationInfo}>
           <Text style={styles.creationDate}>
@@ -193,12 +250,28 @@ export default function NFTModalScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity
+        <Animated.View
+          style={[
+            // styles.buttonContainer,
+            { transform: [{ scale: scaleAnim }] },
+          ]}
+        >
+          <Pressable
+            style={styles.shareButton}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
+            onPress={() => setIsModalVisible(true)}
+          >
+            <Text style={styles.shareButtonText}>Mint to Curate</Text>
+          </Pressable>
+        </Animated.View>
+        {/* <Pressable
           style={styles.shareButton}
-          onPress={() => setIsModalVisible(true)}
+          onPressIn={onPressIn}
+          onPressOut={onPressOut}
         >
           <Text style={styles.shareButtonText}>Mint</Text>
-        </TouchableOpacity>
+        </Pressable> */}
       </View>
     </SafeAreaView>
   );
@@ -214,6 +287,10 @@ const styles = StyleSheet.create({
   dismissHandle: {
     alignItems: "center",
     paddingVertical: 10,
+  },
+  buttonContainer: {
+    width: "100%",
+    marginBottom: 32,
   },
   handle: {
     width: 40,
@@ -238,7 +315,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     aspectRatio: 1,
-    width: "90%",
+    width: "84%",
     alignSelf: "center",
     backgroundColor: "#F2F2F7",
     borderRadius: 6,
@@ -247,7 +324,7 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 15,
     // Android shadow (elevation)
     elevation: 10, // Adjust as necessary

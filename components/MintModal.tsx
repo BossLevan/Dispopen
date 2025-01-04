@@ -7,9 +7,14 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  ActivityIndicator,
 } from "react-native";
 import { Minus, Plus, X } from "lucide-react-native";
 import { useZoraTokenCreation } from "@/hooks/useZora";
+import { showToast } from "./Toast";
+import { router } from "expo-router";
+import { apiService } from "@/api/api";
+import { useAccount } from "wagmi";
 
 interface MintModalProps {
   visible: boolean;
@@ -27,7 +32,9 @@ export const MintModal: React.FC<MintModalProps> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedButton, setSelectedButton] = useState<number | null>(1);
   const [isModalRendered, setIsModalRendered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { mint } = useZoraTokenCreation();
+  const { address } = useAccount();
 
   // Animated values for overlay and modal
   const overlayOpacity = useRef(new Animated.Value(0)).current;
@@ -83,10 +90,21 @@ export const MintModal: React.FC<MintModalProps> = ({
   };
 
   const handleMint = async () => {
+    setIsLoading(true);
     onDeposit?.(quantity);
     const res = await mint(tokenContract, quantity);
-    console.log(res);
+    if (res.e) {
+      showToast("error", "Mint Failed");
+      setIsLoading(false);
+      onClose();
+      return;
+    }
+    showToast("success", "Minted");
     onClose();
+    setIsLoading(false);
+
+    router.back();
+    await apiService.incrementDispopensCurated(address!);
   };
 
   if (!isModalRendered) return null;
@@ -185,16 +203,27 @@ export const MintModal: React.FC<MintModalProps> = ({
 
           <View style={styles.disclaimerContainer}>
             <Text style={styles.disclaimer}>
-              The more you mint, the closer this dispopen gets to graduation 👑
+              The more you mint, the closer this dispopen gets to graduation
             </Text>
           </View>
 
           <TouchableOpacity
-            style={styles.depositButton}
-            onPress={handleMint}
+            onPress={!isLoading ? handleMint : () => {}} // Disable button interaction when loading
+            style={[styles.depositButton, isLoading && styles.disabledButton]}
             accessibilityLabel="Mint"
           >
-            <Text style={styles.depositButtonText}>Mint</Text>
+            <View style={styles.horizontalContainer}>
+              {isLoading && (
+                <ActivityIndicator
+                  size="small"
+                  color="#ffffff"
+                  style={styles.spinner}
+                />
+              )}
+              <Text style={styles.depositButtonText}>
+                {isLoading ? "Minting..." : "Mint"}
+              </Text>
+            </View>
           </TouchableOpacity>
         </Animated.View>
       </Animated.View>
@@ -231,6 +260,9 @@ const styles = StyleSheet.create({
     color: "#000000",
     marginTop: 0,
     marginBottom: 30,
+  },
+  disabledButton: {
+    opacity: 0.8, // Dim the button to indicate it's in a loading state
   },
   counterContainer: {
     flexDirection: "row",
@@ -283,7 +315,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   disclaimerContainer: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#E8F5E9",
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -293,7 +325,8 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontFamily: "CabinetGrotesk-Medium",
     fontSize: 15,
-    color: "#666666",
+    lineHeight: 22,
+    color: "#2E7D32",
     textAlign: "left",
   },
   totalContainer: {
@@ -326,5 +359,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 17,
     fontFamily: "CabinetGrotesk-Bold",
+  },
+  horizontalContainer: {
+    flexDirection: "row", // Align spinner and text horizontally
+    alignItems: "center",
+  },
+  spinner: {
+    marginRight: 8, // Adds spacing between spinner and text
   },
 });

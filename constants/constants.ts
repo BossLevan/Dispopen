@@ -44,3 +44,4 @@
 
 
 export const myWalletAddress: `0x${string}` = '0xdd59a87E011CAe37f479900F7275c3b45d954505'
+export const dispopenZoraAddress = 'https://zora.co/collect/base:0xe8a9c929f41b50804e5a9d30c4053e02207a88c6/1'

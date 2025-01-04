@@ -47,6 +47,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   // Local state for `signInPrivy`
   const [[isPrivyLoading, signInPrivy], setSignInPrivy] =
     useStorageState("privy");
+  const [[hasSeenIntroLoading, hasSeenIntro], setHasSeenIntro] =
+    useStorageState("hasSeenIntro");
 
   return (
     <AuthContext.Provider
@@ -64,6 +66,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           logout();
           setSession(null);
           setSignInPrivy(null);
+          setHasSeenIntro(null);
         },
         session,
         isLoading,

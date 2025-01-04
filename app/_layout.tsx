@@ -17,6 +17,8 @@ import * as Storage from "@/utils/storage_visit_name";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import LoadingSkeleton from "@/components/loadingSkeleton";
 import { useNavigationLogic } from "@/hooks/useNavigation";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/components/Toast";
 
 const queryClient = new QueryClient();
 // SplashScreen.preventAutoHideAsync();
@@ -99,6 +101,7 @@ export default function RootLayout() {
           <SessionProvider>
             <GestureHandlerRootView>
               <RootLayoutNav />
+              <Toast config={toastConfig} />
             </GestureHandlerRootView>
             <PrivyElements />
           </SessionProvider>

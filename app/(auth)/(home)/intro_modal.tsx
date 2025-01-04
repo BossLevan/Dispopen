@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Button,
+  ActivityIndicator,
+  Image,
 } from "react-native";
-import { Camera, ImageIcon, BarChart3 } from "lucide-react-native";
+import {
+  Camera,
+  ImageIcon,
+  BarChart3,
+  User,
+  Users,
+  Users2Icon,
+} from "lucide-react-native";
 import { useStorageState } from "@/hooks/useStorageState";
 import { router } from "expo-router";
 import { useWallet } from "@/hooks/useWallet";
@@ -15,6 +24,7 @@ import { useWallet } from "@/hooks/useWallet";
 export default function IntroModal({ onContinue }: { onContinue: () => void }) {
   const [[hasSeenIntroLoading, hasSeenIntro], setHasSeenIntro] =
     useStorageState("hasSeenIntro");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     connectWallet,
@@ -29,32 +39,43 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
 
   async function handleClose() {
     try {
+      setIsLoading(true);
       await connectWallet();
       console.log("im not waiting ooo");
       setHasSeenIntro("true");
+      setIsLoading(false);
       router.back();
     } catch (error) {
       console.error("Error connecting wallet:", error);
       // Optionally, you can show an error message to the user here
+    } finally {
+      setIsLoading(false);
     }
   }
+
   const steps = [
     {
       icon: Camera,
-      title: "Snap",
-      description: "Capture selfies and express yourself in new creative ways",
+      title: "Create",
+      mainColor: "#008080",
+      accentColor: "#E6F3F3", // Softer teal accent
+      description: "Capture your favorite meme moments",
     },
     {
       icon: ImageIcon,
-      title: "Mint",
+      title: "Curate",
+      mainColor: "#800020",
+      accentColor: "#F9E6E9", // Softer pink accent
       description:
-        "Enhance your creation with filters by top artists, adding your unique flair",
+        "Vote for Dispopens you love to shape the official collection.",
     },
     {
-      icon: BarChart3,
-      title: "Share",
+      icon: Users,
+      title: "Connect",
+      mainColor: "#000080",
+      accentColor: "#E6F0F9", // Softer blue accent
       description:
-        "Let others collect your minted piece and watch its value growww",
+        "Share your favorite Dispopens to showcase your unique taste.",
     },
   ];
 
@@ -66,8 +87,13 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
         <View style={styles.stepsContainer}>
           {steps.map((step, index) => (
             <View key={index} style={styles.step}>
-              <View style={styles.iconContainer}>
-                <step.icon size={24} color="#000" strokeWidth={2} />
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: step.accentColor },
+                ]}
+              >
+                <step.icon size={20} color={step.mainColor} strokeWidth={2} />
               </View>
               <View style={styles.stepContent}>
                 <Text style={styles.stepTitle}>{step.title}</Text>
@@ -76,22 +102,26 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
             </View>
           ))}
         </View>
-
-        {/* <Button title="Generate Message" onPress={handleGenerateMessage} />
-        <Button title="Disconnect" onPress={handleDisconnect} /> */}
-        {/* 
-        {Boolean(message) && <Text>{message as string}</Text>} */}
-
-        {/* {Boolean(message) && (
-          <Button title="Sign Message" onPress={handleSignMessage} />
-        )}
-        <Button title="Connect Wallet" onPress={connectWallet} />
-        <Button title="Link Wallet with Privy" onPress={linkWallet} /> */}
       </View>
 
       <View style={styles.footer}>
+        <Text style={styles.disclaimer}>
+          Don't worry if you don't have a wallet, you will be prompted to create
+          one. Takes less than a minute.
+        </Text>
         <TouchableOpacity style={styles.continueButton} onPress={handleClose}>
-          <Text style={styles.continueButtonText}>Connect Wallet</Text>
+          <View style={styles.horizontalContainer}>
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color="#ffffff"
+                style={styles.spinner}
+              />
+            )}
+            <Text style={styles.connectWalletText}>
+              {isLoading ? "Connecting..." : "Connect Wallet"}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -107,13 +137,20 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 36,
-    paddingTop: 40,
+    paddingTop: 0, // Remove top padding to accommodate the image
+  },
+  headerImage: {
+    width: "140%",
+    marginHorizontal: -80,
+    height: 150, // Adjust this value as needed
+    marginBottom: 20,
   },
   title: {
     fontSize: 34,
     fontFamily: "CabinetGrotesk-Extrabold",
     fontWeight: "bold",
-    marginBottom: 40,
+    marginBottom: 30,
+    marginTop: 64,
     justifyContent: "center",
     alignSelf: "center",
   },
@@ -128,8 +165,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 8,
-    backgroundColor: "#F2F2F7",
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -144,13 +180,23 @@ const styles = StyleSheet.create({
   },
   stepDescription: {
     fontSize: 19,
-    lineHeight: 22,
+    lineHeight: 24,
     fontFamily: "CabinetGrotesk-Medium",
     color: "#606060",
   },
   footer: {
     padding: 24,
     paddingBottom: 32,
+    paddingTop: 16,
+  },
+  disclaimer: {
+    paddingHorizontal: 12,
+    fontSize: 15,
+    lineHeight: 18,
+    color: "#909090",
+    textAlign: "center",
+    marginBottom: 16,
+    fontFamily: "CabinetGrotesk-Medium",
   },
   continueButton: {
     backgroundColor: "#000",
@@ -163,5 +209,17 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: "CabinetGrotesk-Bold",
     fontWeight: "600",
+  },
+  connectWalletText: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontFamily: "CabinetGrotesk-Bold",
+  },
+  horizontalContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  spinner: {
+    marginRight: 8,
   },
 });

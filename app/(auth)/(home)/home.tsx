@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import { ActivityIndicator, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 import {
   BadgeCheck,
   Camera,
@@ -28,6 +29,7 @@ import {
   Plus,
   Settings,
   Trash2,
+  Wallet,
 } from "lucide-react-native";
 import { StatsCard } from "@/components/home/StatsCard";
 import {
@@ -47,14 +49,20 @@ import { convertIpfsToPinataUrl } from "@/utils/ipfs";
 import { useWallet } from "@/hooks/useWallet";
 import { Token } from "@/constants/types";
 import { useStorageState } from "@/hooks/useStorageState";
+import { FeaturedSection } from "@/components/FeaturedSection";
+import { showToast } from "@/components/Toast";
+import {
+  prettyCreatorWalletAddress,
+  prettyWalletAddress,
+} from "@/utils/pretty_wallet";
+import WalletHeader from "@/components/home/WalletHeader";
 
 const HomeScreen: React.FC = () => {
   const featuredRef = useRef<FlatList>(null);
   const createdRef = useRef<FlatList>(null);
 
   const { address } = useAccount();
-  const { images, isLoading, refreshing, onRefresh, fetchImages } =
-    useImageState(address);
+  const { images, refreshing, onRefresh, isLoading } = useImageState(address);
   const { openCamera, openImageLibrary } = useImagePicker();
   const {
     handleFabPress,
@@ -79,6 +87,16 @@ const HomeScreen: React.FC = () => {
     privyUser,
   } = useWallet();
 
+  const getCuratorCount = useCallback(() => {
+    if (!address) return Promise.resolve(0);
+    return apiService.getDispopensCurated(address);
+  }, [address]);
+
+  const getGraduatedCount = useCallback(() => {
+    if (!address) return Promise.resolve(0);
+    return apiService.getGraduatedDispopensLength(address);
+  }, [address]);
+
   //**===============UI FUNCTIONS===============//
   const renderDispopenCard = ({
     item,
@@ -97,7 +115,7 @@ const HomeScreen: React.FC = () => {
       }}
     >
       <DispopenCard
-        author="kosi.base.eth" //hardcoded
+        author={prettyCreatorWalletAddress(item.creator)} //hardcoded
         image={convertIpfsToPinataUrl(item.metadata.image)}
         progress={Number.parseInt(item.totalMinted)}
       />
@@ -110,10 +128,11 @@ const HomeScreen: React.FC = () => {
     viewableItems: ViewToken[];
   }) => {
     // You can add logic here to update the UI based on which items are currently visible
-    console.log("Visible items are:", viewableItems);
+    // console.log("Visible items are:", viewableItems);
   };
   //===============UI FUNCTIONS===============*//
 
+  //======TO SHOW THE INTRO MODAL ON START============//
   useEffect(() => {
     console.log("hasSeenIntro", hasSeenIntro);
     if (hasSeenIntro == "false" || hasSeenIntro == null) {
@@ -124,6 +143,13 @@ const HomeScreen: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [hasSeenIntro, router]);
+  //======TO SHOW THE INTRO MODAL ON START============//
+
+  const handleWalletPress = async () => {
+    // console.log(address);
+    await Clipboard.setStringAsync(address as string);
+    showToast("success", "Copied Address");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,30 +164,42 @@ const HomeScreen: React.FC = () => {
           />
         }
       >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>laurent.base.eth</Text>
-          <Pressable onPress={handleSettingsPress}>
-            <Settings width={24} height={24} color="#000" strokeWidth={2} />
-          </Pressable>
-        </View>
+        {/* <View style={styles.header}>
+          <Text style={styles.headerTitle}>
+            {prettyWalletAddress(address!)}
+          </Text>
+          <View style={styles.iconContainer}>
+            <Pressable onPress={handleWalletPress} style={styles.iconButton}>
+              <Wallet width={24} height={24} color="#000" strokeWidth={2.2} />
+            </Pressable>
+            <Pressable onPress={handleSettingsPress} style={styles.iconButton}>
+              <Settings width={24} height={24} color="#000" strokeWidth={2.2} />
+            </Pressable>
+          </View>
+        </View> */}
+        <WalletHeader
+          address={address!}
+          onSettingsPress={handleSettingsPress}
+          onWalletPress={handleWalletPress}
+        />
 
         <View style={styles.statsContainer}>
           <StatsCard
-            title="curator"
-            value="17"
-            subtitle="dispopens curated"
+            title="curated"
+            valueLoader={getCuratorCount}
+            subtitle="dispopens"
             color="red"
             gradientColors={["#FB6767", "#FF9B9B", "#61A0FF"]}
           />
           <StatsCard
-            title="principal"
-            value="7"
-            subtitle="dispopens graduated"
+            title="graduated"
+            valueLoader={getGraduatedCount}
+            subtitle="dispopens"
             color="blue"
             gradientColors={["#61A0FF", "#FC52FE", "#FB6767"]}
           />
         </View>
-
+        {/* 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured</Text>
@@ -193,20 +231,27 @@ const HomeScreen: React.FC = () => {
               contentContainerStyle={styles.horizontalScroll}
             />
           )}
-        </View>
+        </View> */}
+
+        <FeaturedSection
+          address={address!}
+          renderDispopenCard={renderDispopenCard}
+          onViewableItemsChanged={onViewableItemsChanged}
+        />
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Created (5)</Text>
-            <Ionicons
+            <Text style={styles.sectionTitle}>Created</Text>
+            {/* <Ionicons
               name="information-circle-outline"
               size={24}
               color="#666"
-            />
+            /> */}
+            {isLoading && <ActivityIndicator color="#ff4545" />}
           </View>
           <Text style={styles.sectionSubtitle}>dispopens created by you</Text>
 
-          {images.length != 0 && (
+          {images.length !== 0 ? (
             <FlatList
               ref={createdRef}
               data={images}
@@ -221,6 +266,15 @@ const HomeScreen: React.FC = () => {
               viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
               contentContainerStyle={styles.horizontalScroll}
             />
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateTitle}>
+                No Dispopens Created Yet
+              </Text>
+              <Text style={styles.emptyStateSubtitle}>
+                Start creating your Dispopens and showcase them here.
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -337,6 +391,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "CabinetGrotesk-Extrabold",
   },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  iconButton: {
+    marginLeft: 12, // Space between icons
+  },
   statsContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
@@ -383,7 +445,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     right: 20,
     bottom: 48,
-    backgroundColor: "#ff4545",
+    backgroundColor: "#000",
     borderRadius: 28,
     elevation: 8,
     shadowColor: "#000",
@@ -430,6 +492,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     fontFamily: "CabinetGrotesk-Medium",
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    fontFamily: "CabinetGrotesk-Bold",
+    color: "#333",
+  },
+  emptyStateSubtitle: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    fontFamily: "CabinetGrotesk-Medium",
+    marginTop: 8,
   },
 });
 

@@ -26,6 +26,7 @@ export default function DisplayNameScreen() {
       useNativeDriver: true,
     }).start();
     router.replace("/(auth)/(home)/home");
+    //creating a local session here.
     setSession();
     console.log("set to true");
   };

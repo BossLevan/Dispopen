@@ -65,10 +65,11 @@ export function useNavigationLogic(
 
     // Authentication Flow
     if (!session && signInPrivy) { //first time
-        router.replace("/(auth)/display_name");
+        router.replace("/(auth)/(home)/home");
         return
       // Authenticated user flow
-    } else if(!session && !signInPrivy){
+    } 
+    if(!session && !signInPrivy){
       // Not authenticated
       if (currentPath !== "login") {
         console.log("Not authenticated: Redirecting to login");
@@ -78,6 +79,9 @@ export function useNavigationLogic(
     } else if (session && signInPrivy){
         router.replace("/(auth)/(home)/home");
         return
+    } else {
+        //handle any other condition
+        router.replace("/login");
     }
   }, [signInPrivy, isPrivyLoading]);
 }

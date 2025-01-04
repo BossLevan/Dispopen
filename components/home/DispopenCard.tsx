@@ -28,13 +28,17 @@ export const DispopenCard: React.FC<DispopenCardProps> = ({
           styles.progressBar,
           {
             width: `${
-              progress != (0 * 100) / 1111 ? progress : (20 * 100) / 1111
+              progress != (0 * 100) / 1111
+                ? (progress + 20 * 100) / 1111
+                : (20 * 100) / 1111
             }%`,
           }, //eveything over 1111 tokens (default graduation mint)
         ]}
       />
     </View>
-    <Text style={styles.progressText}>{progress}%</Text>
+    <Text style={styles.progressText}>
+      {((progress * 100) / 1111).toFixed()}%
+    </Text>
   </View>
 );
 

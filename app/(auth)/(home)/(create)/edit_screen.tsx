@@ -14,6 +14,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,12 +25,15 @@ import { router } from "expo-router";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { getAddress } from "viem";
+import * as Progress from "react-native-progress";
 
 //zora imports
 import { useZoraTokenCreation } from "@/hooks/useZora";
 import CompositeImage from "@/components/CompositeImage";
 import { apiService } from "@/api/api";
 import { Frame } from "@/constants/types";
+import { showToast } from "@/components/Toast";
+import TitleInput from "@/components/TitleInput";
 
 type FrameRefs = {
   [key: string]: React.RefObject<View>;
@@ -39,10 +43,14 @@ export default function FramesSelectionScreen() {
   //it can actually use random id's now so you can refactor if you want
   const [selectedFrame, setSelectedFrame] = useState("1");
   const [title, setTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [selectedImageUri, setSelectedImageUri] = useState("");
   const [ticker, setTicker] = useState("");
   const [isTickerModalVisible, setTickerModalVisible] = useState(false);
   const [tempTicker, setTempTicker] = useState("");
+  const [progress, setProgress] = useState(0); // Added progress state
+  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { image } = useLocalSearchParams();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -97,6 +105,21 @@ export default function FramesSelectionScreen() {
     setTickerModalVisible(true);
   };
 
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    setError(null); // Clear any previous error when the user starts typing again
+  };
+
+  const handleSubmit = () => {
+    if (title.trim() === "") {
+      setError("Title cannot be empty");
+    } else {
+      setError(null);
+      // Here you would typically send the title to your backend or perform other actions
+      console.log("Submitted title:", title);
+    }
+  };
+
   const handleTickerSubmit = () => {
     setTicker(tempTicker);
     setTickerModalVisible(false);
@@ -111,23 +134,58 @@ export default function FramesSelectionScreen() {
   };
 
   const handleMinting = async () => {
-    const splitAddress = await getSplitAddress(
-      frames.find((frame) => frame.id === selectedFrame)?.artist_address!
-    );
-    const result = await sendFileToPinata(
-      selectedImageUri as string,
-      title,
-      frames.find((frame) => frame.id === selectedFrame)?.artist_name!,
-      frames.find((frame) => frame.id === selectedFrame)?.title!
-    );
-    const address = await createToken(
-      title,
-      result as string,
-      splitAddress,
-      ticker
-    );
-    console.log(address);
-    router.back();
+    if (title.trim() === "") {
+      setError("Title cannot be empty");
+    } else {
+      setError(null);
+      try {
+        setDisabled(true);
+        setProgress(0.1);
+        const selectedFrameData = frames.find(
+          (frame) => frame.id === selectedFrame
+        );
+        if (!selectedFrameData) throw new Error("Selected frame not found");
+
+        const splitAddress = await getSplitAddress(
+          selectedFrameData.artist_address
+        );
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+        setProgress(0.3);
+
+        const result = await sendFileToPinata(
+          selectedImageUri as string,
+          title,
+          selectedFrameData.artist_name,
+          selectedFrameData.title
+        );
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+        setProgress(0.6);
+
+        const address = await createToken(
+          title,
+          result as string,
+          splitAddress,
+          ticker
+        );
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        setProgress(0.9);
+
+        console.log("Minted Token Address:", address);
+
+        // Add a slight delay to let the progress bar reach 1 visually
+        setProgress(1);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
+        // setDisabled(false);
+        showToast("success", "Minted");
+        router.back();
+      } catch (e) {
+        console.error("Minting failed:", e);
+        showToast("error", "Minting failed");
+        setProgress(0); // Reset progress on failure
+      } finally {
+        setDisabled(false); // Re-enable the button in case of completion or error
+      }
+    }
   };
 
   useEffect(() => {
@@ -137,8 +195,15 @@ export default function FramesSelectionScreen() {
   }, [selectedImageUri]); // This runs every time `selectedImageUri` changes
 
   const handleDone = async () => {
-    console.log(refs.current[selectedFrame]);
+    // setProgress(0);
     await onSaveImageAsync(refs.current[selectedFrame]);
+    // // Simulate progress
+    // for (let i = 0; i <= 100; i += 10) {
+    //   setProgress(i / 100);
+    //   await new Promise((resolve) => setTimeout(resolve, 200));
+    // }
+    // await handleMinting();
+    // setProgress(0);
   };
 
   const handleCancel = () => {
@@ -147,6 +212,7 @@ export default function FramesSelectionScreen() {
 
   // Function to simulate fetching frames from a server
   const fetchFrames = async () => {
+    setIsLoading(true);
     // Simulated API call
     // Let your API start id's with 1 etc for selection ease, can refactor later
     //wrap with try and catch
@@ -159,6 +225,7 @@ export default function FramesSelectionScreen() {
       return acc;
     }, {});
     refs.current = newRefs; // Update the refs with new data
+    setIsLoading(false);
   };
 
   // Fetch frames on component mount
@@ -218,13 +285,27 @@ export default function FramesSelectionScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleCancel}>
+            <TouchableOpacity onPress={handleCancel} disabled={disabled}>
               <Text style={styles.cancelButton}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleDone}>
+            <TouchableOpacity onPress={handleDone} disabled={disabled}>
               <Text style={styles.doneButton}>Done</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Progress Bar */}
+          {progress > 0 && (
+            <View style={styles.progressBarContainer}>
+              <Progress.Bar
+                progress={progress}
+                width={null}
+                height={4}
+                color="#FF3B30"
+                unfilledColor="#F2F2F7"
+                borderWidth={0}
+              />
+            </View>
+          )}
 
           {/* Title Input Area */}
           <View style={styles.titleContainer}>
@@ -237,13 +318,14 @@ export default function FramesSelectionScreen() {
               <Clock strokeWidth="3" stroke="#fff" />
             </View>
             <View style={styles.titleInputArea}>
-              <TextInput
+              {/* <TextInput
                 style={styles.titleInput}
                 placeholder="Add a title"
                 placeholderTextColor="#C7C7CC"
                 value={title}
                 onChangeText={setTitle}
-              />
+              /> */}
+              <TitleInput onTitleChange={handleTitleChange} error={error} />
               {ticker ? (
                 <View style={styles.tickerContainer}>
                   <Text style={styles.tickerText}>{ticker}</Text>
@@ -274,40 +356,48 @@ export default function FramesSelectionScreen() {
           </View>
 
           {/* Frames Grid */}
-          <ScrollView style={styles.scrollView}>
-            <View style={styles.grid}>
-              {frames.map((frame) => (
-                <TouchableOpacity
-                  key={frame.id}
-                  style={[
-                    styles.frameItem,
-                    selectedFrame === frame.id && styles.selectedFrame,
-                  ]}
-                  onPress={() => handleSelectFrame(frame.id)}
-                >
-                  {/* <Image
+          {isLoading ? (
+            <View style={styles.activityContainer}>
+              <ActivityIndicator size="large" color="red" />
+            </View>
+          ) : (
+            <ScrollView style={styles.scrollView}>
+              <View style={styles.grid}>
+                {frames.map((frame) => (
+                  <TouchableOpacity
+                    key={frame.id}
+                    style={[
+                      styles.frameItem,
+                      selectedFrame === frame.id && styles.selectedFrame,
+                    ]}
+                    onPress={() => handleSelectFrame(frame.id)}
+                  >
+                    {/* <Image
                       source={{ uri: image as string }}
                       style={styles.frameImage}
                     /> */}
-                  <View style={styles.frameImageContainer}>
-                    <View ref={refs.current[frame.id]} collapsable={false}>
-                      <CompositeImage
-                        imageSource={image as string}
-                        frameSource={frame.frame_image_url}
-                      />
+                    <View style={styles.frameImageContainer}>
+                      <View ref={refs.current[frame.id]} collapsable={false}>
+                        <CompositeImage
+                          imageSource={image as string}
+                          frameSource={frame.frame_image_url}
+                        />
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.frameInfo}>
-                    <Text style={styles.frameTitle}>{frame.title}</Text>
-                    <View style={styles.artistContainer}>
-                      <Text style={styles.artistName}>{frame.artist_name}</Text>
-                      <BadgeCheck fill="#61A0FF" stroke="#fff" />
+                    <View style={styles.frameInfo}>
+                      <Text style={styles.frameTitle}>{frame.title}</Text>
+                      <View style={styles.artistContainer}>
+                        <Text style={styles.artistName}>
+                          {frame.artist_name}
+                        </Text>
+                        <BadgeCheck fill="#61A0FF" stroke="#fff" />
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          )}
 
           {/* Ticker Modal */}
           {isTickerModalVisible && (
@@ -451,6 +541,11 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  activityContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -539,5 +634,10 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     fontFamily: "CabinetGrotesk-Medium",
+  },
+  progressBarContainer: {
+    // Added progress bar styles
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
 });

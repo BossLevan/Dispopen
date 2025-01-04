@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B7486C47A079D694A5CF682 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F71548D9A9F30A859D497BDB /* PrivacyInfo.xcprivacy */; };
-		124E4E80EC3B419EA0B1761A /* CabinetGrotesk-Extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9EAE3485FA014975A09697B6 /* CabinetGrotesk-Extrabold.otf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		19AD06050A244B37975619B2 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3778727AA64249BFDEC196 /* noop-file.swift */; };
+		2A9A4D7D598F441E86676CC8 /* CabinetGrotesk-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = D55BF944729C41A68011D21F /* CabinetGrotesk-Regular.otf */; };
+		3D8E267DF22F41749C701538 /* CabinetGrotesk-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = E5D3DDED7E474DDF819D1A87 /* CabinetGrotesk-Medium.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		438763FEA3324887940CC3F9 /* CabinetGrotesk-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 85A88079B9C1498FAFDC0D99 /* CabinetGrotesk-Black.otf */; };
+		4F6AB64E2ABB45FC9A108B08 /* CabinetGrotesk-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E274598FECF44799957E7050 /* CabinetGrotesk-Bold.otf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-Dispopen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Dispopen.a */; };
-		A634028C8B144C5499931121 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E52CDD5207D47B49ABCCCF6 /* noop-file.swift */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		BAA4BF5645AE47FBAF6781D8 /* CabinetGrotesk-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = FA7B6050EEB2490B80A81CFB /* CabinetGrotesk-Bold.otf */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		EAC16ABBF1B1401A90F77B98 /* CabinetGrotesk-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = AD09B517C5F64D63BCA84450 /* CabinetGrotesk-Medium.otf */; };
-		EE99E4FD59EF4163A4F1C148 /* CabinetGrotesk-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 43E00B48CB3B44F3A2299375 /* CabinetGrotesk-Regular.otf */; };
+		D3CF82C63B46A5232CDDBA51 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 83A1C3D6B730F7AE2A45EEAD /* PrivacyInfo.xcprivacy */; };
+		F339A8C8F24D4B7A8C65684B /* CabinetGrotesk-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87E5364D62E24E83B18DEFEB /* CabinetGrotesk-Black.otf */; };
+		F34E37F67A9946E6BA4DC202 /* CabinetGrotesk-Extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = EB9A65882A28487AAF0F7D61 /* CabinetGrotesk-Extrabold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,20 +30,20 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Dispopen/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Dispopen/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Dispopen/main.m; sourceTree = "<group>"; };
-		43E00B48CB3B44F3A2299375 /* CabinetGrotesk-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Regular.otf"; path = "../assets/fonts/CabinetGrotesk-Regular.otf"; sourceTree = "<group>"; };
-		5780F372D38E4F599D9A0F02 /* Dispopen-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Dispopen-Bridging-Header.h"; path = "Dispopen/Dispopen-Bridging-Header.h"; sourceTree = "<group>"; };
+		4A3778727AA64249BFDEC196 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Dispopen/noop-file.swift"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Dispopen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Dispopen.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-Dispopen.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dispopen.debug.xcconfig"; path = "Target Support Files/Pods-Dispopen/Pods-Dispopen.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-Dispopen.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dispopen.release.xcconfig"; path = "Target Support Files/Pods-Dispopen/Pods-Dispopen.release.xcconfig"; sourceTree = "<group>"; };
-		7E52CDD5207D47B49ABCCCF6 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Dispopen/noop-file.swift"; sourceTree = "<group>"; };
-		85A88079B9C1498FAFDC0D99 /* CabinetGrotesk-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Black.otf"; path = "../assets/fonts/CabinetGrotesk-Black.otf"; sourceTree = "<group>"; };
-		9EAE3485FA014975A09697B6 /* CabinetGrotesk-Extrabold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Extrabold.otf"; path = "../assets/fonts/CabinetGrotesk-Extrabold.otf"; sourceTree = "<group>"; };
+		83A1C3D6B730F7AE2A45EEAD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Dispopen/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		87E5364D62E24E83B18DEFEB /* CabinetGrotesk-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Black.otf"; path = "../assets/fonts/CabinetGrotesk-Black.otf"; sourceTree = "<group>"; };
+		A789195C56C5409C85856984 /* Dispopen-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Dispopen-Bridging-Header.h"; path = "Dispopen/Dispopen-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Dispopen/SplashScreen.storyboard; sourceTree = "<group>"; };
-		AD09B517C5F64D63BCA84450 /* CabinetGrotesk-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Medium.otf"; path = "../assets/fonts/CabinetGrotesk-Medium.otf"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		D55BF944729C41A68011D21F /* CabinetGrotesk-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Regular.otf"; path = "../assets/fonts/CabinetGrotesk-Regular.otf"; sourceTree = "<group>"; };
+		E274598FECF44799957E7050 /* CabinetGrotesk-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Bold.otf"; path = "../assets/fonts/CabinetGrotesk-Bold.otf"; sourceTree = "<group>"; };
+		E5D3DDED7E474DDF819D1A87 /* CabinetGrotesk-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Medium.otf"; path = "../assets/fonts/CabinetGrotesk-Medium.otf"; sourceTree = "<group>"; };
+		EB9A65882A28487AAF0F7D61 /* CabinetGrotesk-Extrabold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Extrabold.otf"; path = "../assets/fonts/CabinetGrotesk-Extrabold.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F71548D9A9F30A859D497BDB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Dispopen/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		FA7B6050EEB2490B80A81CFB /* CabinetGrotesk-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "CabinetGrotesk-Bold.otf"; path = "../assets/fonts/CabinetGrotesk-Bold.otf"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Dispopen/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,9 +69,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				7E52CDD5207D47B49ABCCCF6 /* noop-file.swift */,
-				5780F372D38E4F599D9A0F02 /* Dispopen-Bridging-Header.h */,
-				F71548D9A9F30A859D497BDB /* PrivacyInfo.xcprivacy */,
+				4A3778727AA64249BFDEC196 /* noop-file.swift */,
+				A789195C56C5409C85856984 /* Dispopen-Bridging-Header.h */,
+				83A1C3D6B730F7AE2A45EEAD /* PrivacyInfo.xcprivacy */,
 			);
 			name = Dispopen;
 			sourceTree = "<group>";
@@ -85,14 +85,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		7EA621383F1F41828AA0E965 /* Resources */ = {
+		384811C3A0C74418B5B43659 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				85A88079B9C1498FAFDC0D99 /* CabinetGrotesk-Black.otf */,
-				FA7B6050EEB2490B80A81CFB /* CabinetGrotesk-Bold.otf */,
-				9EAE3485FA014975A09697B6 /* CabinetGrotesk-Extrabold.otf */,
-				AD09B517C5F64D63BCA84450 /* CabinetGrotesk-Medium.otf */,
-				43E00B48CB3B44F3A2299375 /* CabinetGrotesk-Regular.otf */,
+				87E5364D62E24E83B18DEFEB /* CabinetGrotesk-Black.otf */,
+				E274598FECF44799957E7050 /* CabinetGrotesk-Bold.otf */,
+				EB9A65882A28487AAF0F7D61 /* CabinetGrotesk-Extrabold.otf */,
+				E5D3DDED7E474DDF819D1A87 /* CabinetGrotesk-Medium.otf */,
+				D55BF944729C41A68011D21F /* CabinetGrotesk-Regular.otf */,
 			);
 			name = Resources;
 			path = "";
@@ -114,7 +114,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				7EA621383F1F41828AA0E965 /* Resources */,
+				384811C3A0C74418B5B43659 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -171,13 +171,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Dispopen" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				CEE21E5C55A620DB5D054C65 /* [Expo] Configure project */,
+				11319AE6F82A244E39A55BED /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				C1D9A5F7D8B5D85CBA6D7480 /* [CP] Embed Pods Frameworks */,
+				08397ACD0084993B79A72A7A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -197,8 +197,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = SVYV3Y9UYA;
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "SVYV3Y9UYA";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -229,12 +229,12 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				438763FEA3324887940CC3F9 /* CabinetGrotesk-Black.otf in Resources */,
-				BAA4BF5645AE47FBAF6781D8 /* CabinetGrotesk-Bold.otf in Resources */,
-				124E4E80EC3B419EA0B1761A /* CabinetGrotesk-Extrabold.otf in Resources */,
-				EAC16ABBF1B1401A90F77B98 /* CabinetGrotesk-Medium.otf in Resources */,
-				EE99E4FD59EF4163A4F1C148 /* CabinetGrotesk-Regular.otf in Resources */,
-				0B7486C47A079D694A5CF682 /* PrivacyInfo.xcprivacy in Resources */,
+				F339A8C8F24D4B7A8C65684B /* CabinetGrotesk-Black.otf in Resources */,
+				4F6AB64E2ABB45FC9A108B08 /* CabinetGrotesk-Bold.otf in Resources */,
+				F34E37F67A9946E6BA4DC202 /* CabinetGrotesk-Extrabold.otf in Resources */,
+				3D8E267DF22F41749C701538 /* CabinetGrotesk-Medium.otf in Resources */,
+				2A9A4D7D598F441E86676CC8 /* CabinetGrotesk-Regular.otf in Resources */,
+				D3CF82C63B46A5232CDDBA51 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +255,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+		};
+		08397ACD0084993B79A72A7A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dispopen/Pods-Dispopen-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dispopen/Pods-Dispopen-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -277,6 +295,25 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		11319AE6F82A244E39A55BED /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Dispopen/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -310,43 +347,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dispopen/Pods-Dispopen-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C1D9A5F7D8B5D85CBA6D7480 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Dispopen/Pods-Dispopen-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dispopen/Pods-Dispopen-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CEE21E5C55A620DB5D054C65 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Dispopen/expo-configure-project.sh\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -357,7 +357,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				A634028C8B144C5499931121 /* noop-file.swift in Sources */,
+				19AD06050A244B37975619B2 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,10 +371,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Dispopen/Dispopen.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SVYV3Y9UYA;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -397,6 +394,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "SVYV3Y9UYA";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
@@ -407,10 +407,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Dispopen/Dispopen.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SVYV3Y9UYA;
 				INFOPLIST_FILE = Dispopen/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -427,6 +424,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "SVYV3Y9UYA";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};

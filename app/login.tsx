@@ -1,19 +1,40 @@
+import React, { useRef, useEffect } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   SafeAreaView,
   Animated,
-  Pressable,
 } from "react-native";
 import { useSession } from "@/components/ctx";
-import { useRef } from "react";
-import { NextButton } from "@/components/GradientButton";
 
 export default function WelcomeScreen() {
-  const { signIn, signOut } = useSession();
+  const { signIn } = useSession();
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const subtitleOpacity = useRef(new Animated.Value(0)).current;
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.stagger(300, [
+      Animated.timing(titleOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(subtitleOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const onPressIn = () => {
     Animated.spring(scaleAnim, {
@@ -33,16 +54,23 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Welcome to Dispopen</Text>
-          <Text style={styles.subtitle}>
-            Turn Selfies into billion dollar narratives.
-          </Text>
+          <Animated.Text style={[styles.title, { opacity: titleOpacity }]}>
+            Welcome to Dispopen
+          </Animated.Text>
+          <Animated.Text
+            style={[styles.subtitle, { opacity: subtitleOpacity }]}
+          >
+            The Internet's disposable camera.
+          </Animated.Text>
         </View>
 
         <Animated.View
           style={[
             styles.buttonContainer,
-            { transform: [{ scale: scaleAnim }] },
+            {
+              transform: [{ scale: scaleAnim }],
+              opacity: buttonOpacity,
+            },
           ]}
         >
           <Pressable
@@ -54,7 +82,6 @@ export default function WelcomeScreen() {
             <Text style={styles.buttonText}>Get Started</Text>
           </Pressable>
         </Animated.View>
-        {/* <NextButton onPress={() => {}} /> */}
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Terms</Text>
