@@ -35,6 +35,7 @@ import { ZoraCreateTokenResponse } from "@/constants/types";
 import { showToast } from "@/components/Toast";
 import * as Clipboard from "expo-clipboard";
 import { dispopenZoraAddress } from "@/constants/constants";
+import * as Haptics from "expo-haptics";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();
@@ -56,6 +57,7 @@ export default function NFTModalScreen() {
       toValue: 0.95,
       useNativeDriver: true,
     }).start();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const onPressOut = () => {

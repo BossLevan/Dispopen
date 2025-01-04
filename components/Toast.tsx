@@ -1,5 +1,6 @@
 import Toast from "react-native-toast-message";
 import { View, Text, StyleSheet } from "react-native";
+import * as Haptics from "expo-haptics";
 import { Check, CheckCircle, X, XCircle } from "lucide-react-native"; // Importing icons from lucide-react-native
 
 // Toast configuration styled to look like a button
@@ -25,6 +26,12 @@ export const showToast = (type: "success" | "error", title: string) => {
     position: "top",
     visibilityTime: 3000,
   });
+
+  Haptics.notificationAsync(
+    type == "success"
+      ? Haptics.NotificationFeedbackType.Success
+      : Haptics.NotificationFeedbackType.Error
+  );
 };
 
 // Styles for the toast container

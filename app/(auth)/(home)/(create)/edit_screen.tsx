@@ -26,6 +26,7 @@ import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { getAddress } from "viem";
 import * as Progress from "react-native-progress";
+import * as Haptics from "expo-haptics";
 
 //zora imports
 import { useZoraTokenCreation } from "@/hooks/useZora";
@@ -134,6 +135,7 @@ export default function FramesSelectionScreen() {
   };
 
   const handleMinting = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (title.trim() === "") {
       setError("Title cannot be empty");
     } else {

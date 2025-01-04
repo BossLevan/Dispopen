@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession } from "@/components/ctx";
 import * as Storage from "@/utils/storage_visit_name";
 import { useDisconnect } from "wagmi";
+import * as Haptics from "expo-haptics";
 
 export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary: () => void) => {
   const [isAndroidMenuVisible, setIsAndroidMenuVisible] = useState(false);
@@ -23,6 +24,7 @@ export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary:
           if (buttonIndex === 2) openImageLibrary();
         }
       );
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } else {
       setIsAndroidMenuVisible(true);
     }

@@ -74,7 +74,8 @@
     "react-native-webview": "13.8.6",
     "viem": "^2.21.29",
     "wagmi": "^2.12.19",
-    "zeego": "^2.0.4"
+    "zeego": "^2.0.4",
+    "expo-haptics": "~13.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

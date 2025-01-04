@@ -8,6 +8,7 @@ import {
   Animated,
 } from "react-native";
 import { useSession } from "@/components/ctx";
+import * as Haptics from "expo-haptics";
 
 export default function WelcomeScreen() {
   const { signIn } = useSession();
@@ -41,6 +42,7 @@ export default function WelcomeScreen() {
       toValue: 0.95,
       useNativeDriver: true,
     }).start();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const onPressOut = () => {

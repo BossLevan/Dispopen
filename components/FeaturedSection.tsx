@@ -90,8 +90,10 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({
         {/* <Ionicons name="information-circle-outline" size={24} color="#666" /> */}
       </View>
       <Text style={styles.sectionSubtitle}>
-        selected dispopens for you to curate into the{" "}
-        <Text style={styles.highlightText}>premier dispopen</Text> collection
+        Mint these dispopens to vote them into the official dispopen collection
+        [coming soon]
+        {/* Selected dispopens for you to curate into the{" "}
+        <Text style={styles.highlightText}>premier dispopen</Text> collection */}
       </Text>
 
       {isLoading ? (

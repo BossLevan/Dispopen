@@ -37,7 +37,7 @@ export const DispopenCard: React.FC<DispopenCardProps> = ({
       />
     </View>
     <Text style={styles.progressText}>
-      {((progress * 100) / 1111).toFixed()}%
+      {((progress * 100) / 1111).toFixed()}% votes
     </Text>
   </View>
 );
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
-    backgroundColor: "#FF4545",
+    backgroundColor: "#4CAF50",
     borderRadius: 100,
   },
   progressText: {

@@ -59,7 +59,7 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
       title: "Create",
       mainColor: "#008080",
       accentColor: "#E6F3F3", // Softer teal accent
-      description: "Capture your favorite meme moments",
+      description: "Create Dispopens by capturing your favorite moments",
     },
     {
       icon: ImageIcon,
@@ -71,11 +71,11 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
     },
     {
       icon: Users,
-      title: "Connect",
+      title: "Share",
       mainColor: "#000080",
       accentColor: "#E6F0F9", // Softer blue accent
       description:
-        "Share your favorite Dispopens to showcase your unique taste.",
+        "Once 1111 mints have been reached, the dispopen gets added to the official collection",
     },
   ];
 
