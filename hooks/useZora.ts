@@ -36,7 +36,7 @@ type Metadata = {
 
 export function useZoraTokenCreation() {
   const functions = getFunctions(firebaseApp);
-  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+  // connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   const pinFileToPinata = httpsCallable<any>(functions, "pinFileToPinata");
   const getSplitsAddress = httpsCallable<any>(functions, "getSplitsAddress");
   const [metadataUrl, setMetadataUrl] = useState<string | null>(null);
@@ -155,6 +155,8 @@ export function useZoraTokenCreation() {
 
 
   const getSplitAddress = useCallback(async (artistAddress: string) => {
+    console.log(address),
+    console.log(artistAddress);
     const result = await getSplitsAddress({
       creatorAddress: address,
       artistAddress: artistAddress

@@ -56,6 +56,7 @@ import {
   prettyWalletAddress,
 } from "@/utils/pretty_wallet";
 import WalletHeader from "@/components/home/WalletHeader";
+import { StatusBar } from "expo-status-bar";
 
 const HomeScreen: React.FC = () => {
   const featuredRef = useRef<FlatList>(null);
@@ -87,15 +88,23 @@ const HomeScreen: React.FC = () => {
     privyUser,
   } = useWallet();
 
-  const getCuratorCount = useCallback(() => {
-    if (!address) return Promise.resolve(0);
-    return apiService.getDispopensCurated(address);
-  }, [address]);
+  // const getCuratorCount = useCallback(() => {
+  //   if (!address) return Promise.resolve(0);
+  //   return apiService.getDispopensCurated(address);
+  // }, [address]);
 
   const getGraduatedCount = useCallback(() => {
     if (!address) return Promise.resolve(0);
     return apiService.getGraduatedDispopensLength(address);
   }, [address]);
+
+  const getCuratedCount = useCallback(
+    (callback: (curatedCount: number) => void) => {
+      if (!address) return Promise.resolve(() => {});
+      return apiService.getDispopensCurated(address, callback);
+    },
+    [address]
+  );
 
   //**===============UI FUNCTIONS===============//
   const renderDispopenCard = ({
@@ -153,6 +162,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style="dark" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -185,8 +195,8 @@ const HomeScreen: React.FC = () => {
 
         <View style={styles.statsContainer}>
           <StatsCard
-            title="curated"
-            valueLoader={getCuratorCount}
+            title="minted"
+            streamLoader={getCuratedCount}
             subtitle="dispopens"
             color="red"
             gradientColors={["#FB6767", "#FF9B9B", "#61A0FF"]}
@@ -249,7 +259,7 @@ const HomeScreen: React.FC = () => {
             /> */}
             {isLoading && <ActivityIndicator color="#ff4545" />}
           </View>
-          <Text style={styles.sectionSubtitle}>dispopens created by you</Text>
+          <Text style={styles.sectionSubtitle}>Dispopens created by you</Text>
 
           {images.length !== 0 ? (
             <FlatList
@@ -272,7 +282,7 @@ const HomeScreen: React.FC = () => {
                 No Dispopens Created Yet
               </Text>
               <Text style={styles.emptyStateSubtitle}>
-                Start creating your Dispopens and showcase them here.
+                Dispopens you create will appear here
               </Text>
             </View>
           )}
@@ -439,8 +449,8 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: "absolute",
-    width: 56,
-    height: 56,
+    width: 60,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
     right: 20,

@@ -14,8 +14,8 @@
     },
     "assetBundlePatterns": [
       "**/*",
-      "./assets/frames/*",
-      "./assets/images/*" 
+      "./assets/videos/*",
+      "./assets/images/*"
     ],
     "ios": {
       "bundleIdentifier": "com.company.dispopen",
@@ -42,23 +42,43 @@
     "plugins": [
       "expo-router",
       [
+        "react-native-share",
+        {
+          "ios": [
+            "fb",
+            "instagram",
+            "twitter",
+            "tiktoksharesdk"
+          ],
+          "android": [
+            "com.facebook.katana",
+            "com.instagram.android",
+            "com.twitter.android",
+            "com.zhiliaoapp.musically"
+          ]
+        }
+      ],
+      [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/CabinetGrotesk-Black.otf", 
-        "./assets/fonts/CabinetGrotesk-Bold.otf",
-      "./assets/fonts/CabinetGrotesk-Extrabold.otf",
-    "./assets/fonts/CabinetGrotesk-Medium.otf",
-  "./assets/fonts/CabinetGrotesk-Regular.otf"]
+          "fonts": [
+            "./assets/fonts/CabinetGrotesk-Black.otf",
+            "./assets/fonts/CabinetGrotesk-Bold.otf",
+            "./assets/fonts/CabinetGrotesk-Extrabold.otf",
+            "./assets/fonts/CabinetGrotesk-Medium.otf",
+            "./assets/fonts/CabinetGrotesk-Regular.otf"
+          ]
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends.",
-          "cameraPermission": "The app accesses your camera to let you take photos to share with your friends."
+          "photosPermission": "This app accesses your photos to let you convert them into dispopens.",
+          "cameraPermission": "This app accesses your camera to let you convert them into dispopens."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "react-native-share"
     ],
     "experiments": {
       "typedRoutes": true

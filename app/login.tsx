@@ -6,10 +6,13 @@ import {
   StyleSheet,
   SafeAreaView,
   Animated,
+  Dimensions,
 } from "react-native";
 import { useSession } from "@/components/ctx";
 import * as Haptics from "expo-haptics";
+import { ResizeMode, Video } from "expo-av";
 
+const { width, height } = Dimensions.get("window");
 export default function WelcomeScreen() {
   const { signIn } = useSession();
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -54,6 +57,13 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* <Video
+        source={require("../assets/videos/Starfield.mp4")} // Replace with your video URL or local file
+        style={styles.video}
+        resizeMode={ResizeMode.COVER}
+        isLooping
+        shouldPlay
+      /> */}
       <View style={styles.content}>
         <View style={styles.titleContainer}>
           <Animated.Text style={[styles.title, { opacity: titleOpacity }]}>
@@ -62,7 +72,7 @@ export default function WelcomeScreen() {
           <Animated.Text
             style={[styles.subtitle, { opacity: subtitleOpacity }]}
           >
-            The Internet's disposable camera.
+            Showcase your taste. Earn rewards.
           </Animated.Text>
         </View>
 
@@ -105,6 +115,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 24,
     paddingBottom: 40,
+  },
+  video: {
+    width: width,
+    height: height,
+    position: "absolute",
   },
   titleContainer: {
     alignItems: "center",

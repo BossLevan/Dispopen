@@ -36,8 +36,11 @@ export const DispopenCard: React.FC<DispopenCardProps> = ({
         ]}
       />
     </View>
-    <Text style={styles.progressText}>
-      {((progress * 100) / 1111).toFixed()}% votes
+    <Text>
+      <Text style={styles.progressText}>
+        {((progress * 100) / 1111).toFixed()}%
+      </Text>
+      <Text style={styles.progressLightText}> progress</Text>
     </Text>
   </View>
 );
@@ -89,6 +92,12 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#4CAF50",
     borderRadius: 100,
+  },
+
+  progressLightText: {
+    fontSize: 13,
+    color: "#A0A0A0", // Lighter color for the text
+    fontFamily: "CabinetGrotesk-Bold",
   },
   progressText: {
     fontSize: 13,

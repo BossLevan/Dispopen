@@ -5,7 +5,7 @@ import {
 } from "firebase/functions";
 import { GraphQLClient, gql } from 'graphql-request';
 import { firebaseApp } from "@/firebaseConfig";
-import { getFirestore, connectFirestoreEmulator, collection, getDocs, doc, getDoc, setDoc, serverTimestamp, updateDoc, increment } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator, collection, getDocs, doc, getDoc, setDoc, serverTimestamp, updateDoc, increment, onSnapshot } from "firebase/firestore";
 import { ApiResponse, Frame, Token, ZoraCreateTokenResponse } from "@/constants/types";
 import { useAccount } from "wagmi";
 import { showToast } from "@/components/Toast";
@@ -13,7 +13,7 @@ import { showToast } from "@/components/Toast";
 
 const functions = getFunctions(firebaseApp);
 const db = getFirestore(firebaseApp, "dispopen");
-connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+// connectFunctionsEmulator(functions, "197.211.53.81:5001", 5001);
 
 // connectFirestoreEmulator(db, "localhost", 8080);
 const getUserDispopens = httpsCallable<any>(functions, "getUserDispopens");
@@ -104,7 +104,7 @@ export const apiService = {
       // console.log("featured dispopens",usableResult.data)
       return usableResult.data!
     } catch (e) {
-      console.error(e)
+      console.error('error', e)
       return [];
     }
   },
@@ -157,26 +157,65 @@ export const apiService = {
  * @param walletAddress - The wallet address of the user.
  * @returns The value of "dispopens_curated" (number).
  */
- async getDispopensCurated(walletAddress: string): Promise<number> {
-  try {
-    console.log("wallet address", walletAddress)
-    const userRef = doc(db, "users", walletAddress!);
-    const userDoc = await getDoc(userRef);
+//  async getDispopensCurated(walletAddress: string): Promise<number> {
+//   try {
+//     console.log("wallet address", walletAddress)
+//     const userRef = doc(db, "users", walletAddress!);
+//     const userDoc = await getDoc(userRef);
 
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-      return data?.dispopens_curated ?? 0; // Return the field value or 0 if it doesn't exist
-    } else {
-      // If the document doesn't exist, initialize it with "dispopens_curated" set to 0
-      await setDoc(userRef, { dispopens_curated: 0 });
-      return 0;
-    }
+//     if (userDoc.exists()) {
+//       const data = userDoc.data();
+//       return data?.dispopens_curated ?? 0; // Return the field value or 0 if it doesn't exist
+//     } else {
+//       // If the document doesn't exist, initialize it with "dispopens_curated" set to 0
+//       await setDoc(userRef, { dispopens_curated: 0 });
+//       return 0;
+//     }
+//   } catch (error) {
+//     console.error("Error retrieving dispopens_curated:", error);
+//     showToast('error', 'failed to retrieve dispopens')
+//     throw new Error("Failed to retrieve dispopens_curated");
+//   }
+// },
+
+async getDispopensCurated(
+  walletAddress: string | null,
+  callback: (curatedCount: number) => void
+): Promise<() => void> {
+  if (!walletAddress) {
+    console.warn("Wallet address is not initialized.");
+    throw new Error("Wallet address is required.");
+
+  }
+
+  try {
+    console.log("Listening to wallet address:", walletAddress);
+    const userRef = doc(db, "users", walletAddress);
+
+    // Real-time listener
+    const unsubscribe = onSnapshot(userRef, async (userDoc) => {
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const curatedCount = data?.dispopens_curated ?? 0;
+        callback(curatedCount); // Call the UI update callback
+      } else {
+        // Initialize the document if it doesn't exist
+        console.log(`Initializing document for wallet: ${walletAddress}`);
+        await setDoc(userRef, { dispopens_curated: 0 });
+        callback(0); // Return 0 to the UI
+      }
+    });
+
+    // Return the unsubscribe function to stop the listener when needed
+    return unsubscribe;
   } catch (error) {
-    console.error("Error retrieving dispopens_curated:", error);
-    showToast('error', 'failed to retrieve dispopens')
-    throw new Error("Failed to retrieve dispopens_curated");
+    console.error("Error streaming dispopens_curated:", error);
+    showToast("error", "Failed to stream dispopens");
+    throw new Error("Failed to stream dispopens_curated");
   }
 },
+
+
 
 /**
  * Increments the "dispopens_curated" field by 1 for a user in the Firestore `users` collection.

@@ -197,13 +197,14 @@ export const MintModal: React.FC<MintModalProps> = ({
           <View style={styles.totalContainer}>
             <Text style={styles.totalText}>Total:</Text>
             <Text style={styles.totalAmount}>
-              {`$${(0.000111 * quantity * 3719).toLocaleString()}`}
+              ~ {`$${(0.000111 * quantity * 3719).toLocaleString()}`}
             </Text>
           </View>
 
           <View style={styles.disclaimerContainer}>
             <Text style={styles.disclaimer}>
-              The more you mint, the closer this dispopen gets to graduation
+              The more you mint, the closer this dispopen gets to securing a
+              spot in the official collection.
             </Text>
           </View>
 

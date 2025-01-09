@@ -16,6 +16,7 @@ import {
   User,
   Users,
   Users2Icon,
+  GraduationCap,
 } from "lucide-react-native";
 import { useStorageState } from "@/hooks/useStorageState";
 import { router } from "expo-router";
@@ -59,7 +60,7 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
       title: "Create",
       mainColor: "#008080",
       accentColor: "#E6F3F3", // Softer teal accent
-      description: "Create Dispopens by capturing your favorite moments",
+      description: "Turn your favorite moments into Dispopens",
     },
     {
       icon: ImageIcon,
@@ -67,15 +68,15 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
       mainColor: "#800020",
       accentColor: "#F9E6E9", // Softer pink accent
       description:
-        "Vote for Dispopens you love to shape the official collection.",
+        "Each mint earns you $$ and moves your Dispopen closer to the official collection",
     },
     {
-      icon: Users,
-      title: "Share",
+      icon: GraduationCap,
+      title: "Graduate",
       mainColor: "#000080",
       accentColor: "#E6F0F9", // Softer blue accent
       description:
-        "Once 1111 mints have been reached, the dispopen gets added to the official collection",
+        "At ~1K mints, your Dispopen graduates and secures its spot in the collection",
     },
   ];
 
@@ -106,8 +107,8 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
 
       <View style={styles.footer}>
         <Text style={styles.disclaimer}>
-          Don't worry if you don't have a wallet, you will be prompted to create
-          one. Takes less than a minute.
+          Dispopen uses Coinbase Smart Wallet to mint and create Dispopens. We
+          will create one for you if you don't have. Takes 10s.
         </Text>
         <TouchableOpacity style={styles.continueButton} onPress={handleClose}>
           <View style={styles.horizontalContainer}>
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontFamily: "CabinetGrotesk-Extrabold",
     fontWeight: "bold",
-    marginBottom: 30,
+    marginBottom: 24,
     marginTop: 64,
     justifyContent: "center",
     alignSelf: "center",
@@ -176,11 +177,11 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: "600",
     fontFamily: "CabinetGrotesk-Bold",
-    marginBottom: 4,
+    marginBottom: 0,
   },
   stepDescription: {
     fontSize: 19,
-    lineHeight: 24,
+    lineHeight: 26,
     fontFamily: "CabinetGrotesk-Medium",
     color: "#606060",
   },
@@ -190,11 +191,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   disclaimer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 3,
     fontSize: 15,
     lineHeight: 18,
     color: "#909090",
-    textAlign: "center",
+    textAlign: "left",
     marginBottom: 16,
     fontFamily: "CabinetGrotesk-Medium",
   },

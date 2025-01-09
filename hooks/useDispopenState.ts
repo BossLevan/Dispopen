@@ -24,14 +24,14 @@ export const useImageState = (address: string | undefined) => {
   const delayedRefresh = useCallback(async () => {
     setIsLoading(true);
     const initialLength = images?.length || 0;
-    const newLength = await fetchImages();
+    // const newLength = await fetchImages();
 
-    if (newLength > initialLength) {
-      setIsLoading(false);
-      return;
-    }
+    // if (newLength > initialLength) {
+    //   setIsLoading(false);
+    //   return;
+    // }
 
-    const delays = [6000]; // Customize as needed
+    const delays = [5000]; // Customize as needed
     for (const delay of delays) {
       refreshTimeout.current = setTimeout(async () => {
         const num = await fetchImages();

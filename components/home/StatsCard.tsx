@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { useAccount } from "wagmi";
-
 interface StatsCardProps {
   title: string;
-  valueLoader: () => Promise<number>;
+  valueLoader?: () => Promise<number>; // Function for one-time fetching
+  streamLoader?: (callback: (value: number) => void) => Promise<() => void>; // Function for real-time streaming
   subtitle: string;
   gradientColors: [string, string, string];
   color: "red" | "blue";
@@ -27,38 +27,65 @@ const GradientView: React.FC<{
 ));
 
 export const StatsCard: React.FC<StatsCardProps> = React.memo(
-  ({ title, valueLoader, subtitle, color, gradientColors }) => {
+  ({ title, valueLoader, streamLoader, subtitle, color, gradientColors }) => {
     const [loading, setLoading] = useState(true);
     const [value, setValue] = useState<number>(0);
+    const { address } = useAccount();
 
     useEffect(() => {
+      let unsubscribe: (() => void) | undefined;
       let isMounted = true;
+      let timeoutId: NodeJS.Timeout;
 
-      const fetchValue = async () => {
-        setLoading(true);
-        try {
-          const result = await valueLoader();
-          if (isMounted) {
-            setValue(result);
+      const loadValue = async () => {
+        if (valueLoader) {
+          // One-time fetch
+          setLoading(true);
+          try {
+            const result = await valueLoader();
+            if (isMounted) {
+              setValue(result);
+            }
+          } catch (error) {
+            console.error("Error loading value:", error);
+          } finally {
+            if (isMounted) {
+              setLoading(false);
+            }
           }
-        } catch (error) {
-          console.error("Error loading value:", error);
-        } finally {
-          if (isMounted) {
+        } else if (streamLoader) {
+          // Real-time streaming
+          setLoading(true);
+          try {
+            unsubscribe = await streamLoader((newValue) => {
+              // Delay the update by 2 seconds
+              timeoutId = setTimeout(() => {
+                if (isMounted) {
+                  setValue(newValue);
+                  setLoading(false);
+                }
+              }, 2000); // 2-second delay
+            });
+          } catch (error) {
+            console.error("Error streaming value:", error);
             setLoading(false);
           }
         }
       };
 
-      fetchValue();
+      loadValue();
+
       return () => {
         isMounted = false;
+        if (unsubscribe) {
+          unsubscribe();
+        }
+        clearTimeout(timeoutId); // Clear any pending timeouts
       };
-    }, [valueLoader]);
+    }, [streamLoader]);
 
     const badgeBackgroundColor = color === "blue" ? "#61A0FF" : "#FF6161";
     const badgeTextColor = "#fff";
-
     return (
       <GradientView colors={gradientColors} style={styles.statsCard}>
         <View style={styles.statsContent}>

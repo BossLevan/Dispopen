@@ -18,7 +18,7 @@ import { createClient} from "viem";
     // appCustomScheme: 'myapp://', // optional, used to remove the Done screen after signing
     appName: "Dispopen",
     appChainIds: [baseSepolia.id, base.id, zoraSepolia.id],
-    appLogoUrl: 'https://www.dispopen.com/public/logo.png'
+    appLogoUrl: 'https://orange-encouraging-guanaco-614.mypinata.cloud/ipfs/QmYqYuypEwuTjiPGiLScfa8JtKHqywkw8eShN7xvdJvNrS'
   }
    
   export const config = createConfig({

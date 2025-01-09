@@ -17,6 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import { File } from 'node:buffer';
 import { PinataSDK } from "pinata-web3";
 import { GraphQLClient, gql } from 'graphql-request';
 import { http, createPublicClient, createWalletClient } from 'viem';
@@ -85,9 +86,9 @@ query GetDispopen($id: String!) {
 const ZORA_FEATURED_DISPOPENS_QUERY = gql `
 query GetFeaturedDispopens {
   zoraCreateTokens(
-    orderBy: timestamp
+    orderBy: totalMinted
     where: {metadata_: {description_contains: "dispopen"}}
-    first: 3
+    first: 6
     orderDirection: desc
   ) {
     creator

@@ -18,6 +18,7 @@ import {
   ActivityIndicator,
   Animated,
   Pressable,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BadgeCheck } from "lucide-react-native";
@@ -36,6 +37,8 @@ import { showToast } from "@/components/Toast";
 import * as Clipboard from "expo-clipboard";
 import { dispopenZoraAddress } from "@/constants/constants";
 import * as Haptics from "expo-haptics";
+import Share from "react-native-share";
+import { getZoraDispopenLink } from "@/utils/zora_link";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();
@@ -51,6 +54,44 @@ export default function NFTModalScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const options = Platform.select({
+    ios: {
+      activityItemSources: [
+        {
+          // For sharing url with custom title.
+          placeholderItem: { type: "url", content: "Dispopen" },
+          item: {
+            default: { type: "url", content: dispopenZoraAddress },
+          },
+          subject: {
+            default: "Share this dispopen on X",
+          },
+          linkMetadata: { originalUrl: dispopenZoraAddress },
+        },
+      ],
+    },
+    default: {
+      title: "Dispopen",
+      subject: "mint",
+      message: `check out this dispopen ${dispopenZoraAddress}`,
+    },
+  });
+
+  const shareUrlWithMessage = async () => {
+    const shareOptions = {
+      title: "Share Dispopen",
+      message: "Check out this Dispopen",
+      url: getZoraDispopenLink(dispopen?.address!),
+    };
+
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      console.log("Result =>", ShareResponse);
+    } catch (error) {
+      console.log("Error =>", error);
+    }
+  };
 
   const onPressIn = () => {
     Animated.spring(scaleAnim, {
@@ -119,9 +160,24 @@ export default function NFTModalScreen() {
     return <LoadingSkeleton />;
   }
 
+  if (error) {
+    return (
+      <View style={{ justifyContent: "center", alignSelf: "center" }}>
+        <Text>Failed to fetch dispopens. {error}</Text>
+      </View>
+    );
+  }
+
   const handleOnSelectContextMenuItem = async () => {
-    await Clipboard.setStringAsync(dispopenZoraAddress as string);
-    showToast("success", "Copied Link");
+    // await Clipboard.setStringAsync(dispopenZoraAddress as string);
+    // // Share.open(options)
+    // //   .then((res) => {
+    // //     console.log(res);
+    // //   })
+    // //   .catch((err) => {
+    // //     err && console.log(err);
+    // //   });
+    // showToast("success", "Copied Link");
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -188,17 +244,15 @@ export default function NFTModalScreen() {
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content>
-              <DropdownMenu.Label>Options</DropdownMenu.Label>
+              {/* <DropdownMenu.Label>Options</DropdownMenu.Label> */}
               <DropdownMenu.Item
-                key="copy dispopen link"
-                onSelect={handleOnSelectContextMenuItem}
+                key="Share Dispopen"
+                onSelect={shareUrlWithMessage}
               >
-                <DropdownMenu.ItemTitle>
-                  Copy Dispopen link
-                </DropdownMenu.ItemTitle>
+                <DropdownMenu.ItemTitle>Share Dispopen</DropdownMenu.ItemTitle>
                 <DropdownMenu.ItemIcon
                   ios={{
-                    name: "doc.on.doc.fill", // required
+                    name: "square.and.arrow.up", // required
                     pointSize: 15,
                     weight: "semibold",
                     scale: "medium",
@@ -241,8 +295,8 @@ export default function NFTModalScreen() {
           </View>
         </View>
         <Text style={styles.disclaimer}>
-          This dispopen is listed on zora and minted on the base network. Owned
-          by you. <Text style={styles.learnMore}>Learn more</Text>
+          This dispopen is minted on the base network.{" "}
+          <Text style={styles.learnMore}>Learn more</Text>
         </Text>
         <MintModal
           visible={isModalVisible}
@@ -399,7 +453,7 @@ const styles = StyleSheet.create({
   mintRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 20,
   },
   mintLabel: {
     color: "#8E8E93",

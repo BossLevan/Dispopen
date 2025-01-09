@@ -19,7 +19,8 @@
     "firebase-functions": "^6.0.1",
     "graphql-request": "^7.1.2",
     "pinata": "^1.8.1",
-    "pinata-web3": "^0.5.2"
+    "pinata-web3": "^0.5.2",
+    "viem": "^2.22.2"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0",

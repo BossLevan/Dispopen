@@ -19,6 +19,7 @@ import LoadingSkeleton from "@/components/loadingSkeleton";
 import { useNavigationLogic } from "@/hooks/useNavigation";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/Toast";
+import { StatusBar } from "expo-status-bar";
 
 const queryClient = new QueryClient();
 // SplashScreen.preventAutoHideAsync();
@@ -102,6 +103,7 @@ export default function RootLayout() {
             <GestureHandlerRootView>
               <RootLayoutNav />
               <Toast config={toastConfig} />
+              <StatusBar style="dark" />
             </GestureHandlerRootView>
             <PrivyElements />
           </SessionProvider>
