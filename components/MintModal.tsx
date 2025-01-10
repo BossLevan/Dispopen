@@ -203,8 +203,8 @@ export const MintModal: React.FC<MintModalProps> = ({
 
           <View style={styles.disclaimerContainer}>
             <Text style={styles.disclaimer}>
-              The more you mint, the closer this dispopen gets to securing a
-              spot in the official collection.
+              Support this creator and get this dispopen closer to a spot in the
+              official collection.
             </Text>
           </View>
 

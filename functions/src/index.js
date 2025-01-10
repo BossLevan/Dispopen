@@ -22,9 +22,9 @@ import { PinataSDK } from "pinata-web3";
 import { GraphQLClient, gql } from 'graphql-request';
 import { http, createPublicClient, createWalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { baseSepolia } from 'viem/chains';
+import { base } from 'viem/chains';
 import { SplitV1Client } from "@0xsplits/splits-sdk";
-const endpoint = 'https://api.goldsky.com/api/public/project_clhk16b61ay9t49vm6ntn4mkz/subgraphs/zora-create-base-sepolia/stable/gn';
+const endpoint = 'https://api.goldsky.com/api/public/project_clhk16b61ay9t49vm6ntn4mkz/subgraphs/zora-create-base-mainnet/stable/gn';
 const client = new GraphQLClient(endpoint);
 const pinata = new PinataSDK({
     pinataJwt: process.env.PINATA_JWT,
@@ -112,6 +112,18 @@ query MyQuery($creatorAddress: String!) {
   }
 }
 `;
+export const unpinFilesFromPinata = onCall((request) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const res = yield pinata.unpin([
+            request.data.metadataHash,
+            request.data.jsonHash
+        ]);
+        return res[0].status;
+    }
+    catch (e) {
+        throw "Could not unpin files";
+    }
+}));
 export const pinFileToPinata = onCall((request) => __awaiter(void 0, void 0, void 0, function* () {
     // Log the function call
     logger.info("pinFileToPinata function called", { structuredData: true });
@@ -138,7 +150,7 @@ export const pinFileToPinata = onCall((request) => __awaiter(void 0, void 0, voi
         });
         // Log success and send response
         logger.info("Metadata pinned successfully", { ipfsHash: metadata.IpfsHash });
-        return { metadataUrl: `ipfs://${metadata.IpfsHash}` };
+        return { metadataUrl: `ipfs://${metadata.IpfsHash}`, hashes: [result.IpfsHash, metadata.IpfsHash] };
     }
     catch (error) {
         // Log error and send error response
@@ -223,19 +235,19 @@ export const getSplitsAddress = onCall((request) => __awaiter(void 0, void 0, vo
     const creatorAddress = request.data.creatorAddress;
     const artistAddress = request.data.artistAddress;
     //Slot in your private Key Here and fund Wallet
-    const account = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
+    const account = privateKeyToAccount('0x1fb0fd662b1399c2fae1c0f6cfcf666fa6f8f4adc7b6976f825d1be7c15eb42f');
     const client = createWalletClient({
         account,
-        chain: baseSepolia,
+        chain: base,
         transport: http()
     });
     const publicClient = createPublicClient({
-        chain: baseSepolia,
+        chain: base,
         transport: http(),
     });
     // setup a splits client
     const splitsClient = new SplitV1Client({
-        chainId: baseSepolia.id,
+        chainId: base.id,
         publicClient: publicClient,
         apiConfig: {
             // This is a dummy 0xSplits api key, replace with your own
@@ -255,7 +267,7 @@ export const getSplitsAddress = onCall((request) => __awaiter(void 0, void 0, vo
             },
             {
                 //My Address [Platform]
-                address: "0xdd59a87E011CAe37f479900F7275c3b45d954505",
+                address: "0x4Fa3ab697dA5270B7335b567cC4e5A9d798D1673",
                 percentAllocation: 10,
             },
         ],

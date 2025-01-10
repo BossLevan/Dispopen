@@ -12,17 +12,18 @@ import * as Linking from "expo-linking";
 
 
 import { createClient} from "viem";
+import { appChainIds, appLogoUrl, appName } from "./constants/constants";
    
   const metadata = {
     appDeeplinkUrl: "https://www.dispopen.com", // required to establish your app's identity, use 'https://' link for production
     // appCustomScheme: 'myapp://', // optional, used to remove the Done screen after signing
-    appName: "Dispopen",
-    appChainIds: [baseSepolia.id, base.id, zoraSepolia.id],
-    appLogoUrl: 'https://orange-encouraging-guanaco-614.mypinata.cloud/ipfs/QmYqYuypEwuTjiPGiLScfa8JtKHqywkw8eShN7xvdJvNrS'
+    appName: appName,
+    appChainIds: appChainIds,
+    appLogoUrl: appLogoUrl
   }
    
   export const config = createConfig({
-    chains: [baseSepolia, base, zoraSepolia],
+    chains: [base],
     connectors: [
       createConnectorFromWallet({
         metadata,
@@ -31,8 +32,6 @@ import { createClient} from "viem";
     ],
     transports: {
       [base.id]: http(),
-      [baseSepolia.id]: http(),
-      [zoraSepolia.id]: http(),
     },
   });
   

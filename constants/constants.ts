@@ -7,6 +7,9 @@
 // export const magicSpendAddress = "0x011A61C07DbF256A68256B1cB51A5e246730aB92";
 // export const erc1967ProxyImplementationSlot =
 //   "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+
+import { base, baseSepolia, zoraSepolia } from "wagmi/chains"
+
  
 // export const coinbaseSmartWalletABI = [
 //   {
@@ -43,5 +46,13 @@
 
 
 
-export const myWalletAddress: `0x${string}` = '0xdd59a87E011CAe37f479900F7275c3b45d954505'
-export const dispopenZoraAddress = 'https://zora.co/collect/base:0xe8a9c929f41b50804e5a9d30c4053e02207a88c6/1'
+export const myWalletAddress: `0x${string}` = '0x4Fa3ab697dA5270B7335b567cC4e5A9d798D1673'
+export const appDeeplinkUr="https://www.dispopen.com"; // required to establish your app's identity, use 'https://' link for production
+    // appCustomScheme: 'myapp://', // 
+    //optional, used to remove the Done screen after signing
+export const appName= "Dispopen";
+export const appChain= base;
+export const appCreateReferral= "0x4Fa3ab697dA5270B7335b567cC4e5A9d798D1673";
+export const appChainIds= [baseSepolia.id, base.id, zoraSepolia.id];
+export const appChains= [baseSepolia, base, zoraSepolia];
+export const appLogoUrl= 'https://orange-encouraging-guanaco-614.mypinata.cloud/ipfs/QmYqYuypEwuTjiPGiLScfa8JtKHqywkw8eShN7xvdJvNrS'

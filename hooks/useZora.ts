@@ -27,10 +27,11 @@ import { createPublicClient, http, Chain, createWalletClient } from "viem";
 import FormData from 'form-data';
 import * as FileSystem from 'expo-file-system';
 import { config } from "@/wallet-config"
-import { myWalletAddress } from "@/constants/constants";
+import { appChain, appCreateReferral, myWalletAddress } from "@/constants/constants";
 
 type Metadata = {
   metadataUrl: string
+  hashes: Array<string>
 }
 
 
@@ -39,18 +40,22 @@ export function useZoraTokenCreation() {
   // connectFunctionsEmulator(functions, "127.0.0.1", 5001);
   const pinFileToPinata = httpsCallable<any>(functions, "pinFileToPinata");
   const getSplitsAddress = httpsCallable<any>(functions, "getSplitsAddress");
+  const unpinFilesFromPinata = httpsCallable<any>(functions, "unpinFilesFromPinata");
+  
   const [metadataUrl, setMetadataUrl] = useState<string | null>(null);
   const [id, setId] = useState<string | undefined>(undefined);
   const [provider, setProvider] = useState<any>(null);
   let [walletClient, setWalletClient] = useState<any>()
+  let metadataHash: string = "";
+  let jsonHash:string = ""
   const configg = useConfig()
   const publicClient = createPublicClient({
-    chain: baseSepolia as Chain,
+    chain: appChain as Chain,
     transport: http(),
   });
-  const creatorClient = createCreatorClient({ chainId: baseSepolia.id, publicClient });
+  const creatorClient = createCreatorClient({ chainId: appChain.id, publicClient });
   const collectorClient = createCollectorClient({
-    chainId: baseSepolia.id,
+    chainId: appChain.id,
     publicClient,
   });
 
@@ -60,7 +65,7 @@ export function useZoraTokenCreation() {
       setProvider(provider)
 
       walletClient = createWalletClient({
-        chain: baseSepolia,
+        chain: appChain,
         transport: custom(provider as any),
       });
       setWalletClient(walletClient)
@@ -122,13 +127,14 @@ export function useZoraTokenCreation() {
     return manipulatedImage.uri;
   };
 
-; 
+
   const sendFileToPinata = useCallback(async (image: string, dispopenTitle: string, artist_name: string, frame_name: string) => {
     // Read the file as base64
     const base64 = await FileSystem.readAsStringAsync(image, {
       encoding: FileSystem.EncodingType.Base64
     });
     const imageName = getFileNameFromUri(image)
+
     try {
       //Call the Firebase Cloud Function
       const result = await pinFileToPinata({
@@ -140,6 +146,8 @@ export function useZoraTokenCreation() {
         },
       });
       let realResult = result.data as unknown as Metadata
+      metadataHash = realResult.hashes[0]
+      jsonHash = realResult.hashes[1]
 
       // @ts-ignore
       setMetadataUrl(realResult.metadataUrl);
@@ -147,6 +155,8 @@ export function useZoraTokenCreation() {
       console.log(metadataUrl)
       return realResult.metadataUrl;
     } catch (error) {
+
+
       console.error('Error uploading to Pinata:', error);
     }
   }, [pinFileToPinata]);
@@ -214,7 +224,7 @@ export function useZoraTokenCreation() {
         token: {
           tokenMetadataURI: tokenMetadataUri,
           payoutRecipient: splitRecipient as `0x${string}`,
-          createReferral: "0xdd59a87E011CAe37f479900F7275c3b45d954505",
+          createReferral: appCreateReferral,
           salesConfig: {
             // Symbol of the erc20z token to create for the secondary sale.  If not provided, extracts it from the name.
             erc20Symbol: ticker ?? "DISPOPEN",
@@ -239,14 +249,26 @@ export function useZoraTokenCreation() {
       // simulate the transaction
       const { request } = await publicClient.simulateContract(parameters);
       // await walletClient.writeContract(request)
-      await writeContract(configg, request)
-      //   writeContracts({
-      //     contracts: [{ ...request }],
-      //     capabilities,
-      //   });
+      // await writeContract(configg, request)
+      await new Promise<void>((resolve, reject) => {
+        try {
+          writeContracts({
+            contracts: [{ ...request }],
+            capabilities,
+          }, {onSuccess: () => resolve(), onError: () => reject() })
+        } catch (error) {
+          reject(error); // Reject if `writeContracts()` throws an error
+        }
+      });
 
       return { contractAddress };
     } catch (e) {
+      //==========UNPIN FILES==========//
+      const res = await unpinFilesFromPinata({
+        metadataHash: metadataHash,
+        jsonHash: jsonHash
+      })
+      console.log(res.data)
       console.error("Error creating token:", e);
       throw e;
     }
@@ -327,6 +349,8 @@ export function useZoraTokenCreation() {
       // const hash = await writeContract(configg, request)
       return {hash}
     } catch (e) {
+
+
       console.log('error', e)
       return {e}
     }

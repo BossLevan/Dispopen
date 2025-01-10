@@ -52,3 +52,5 @@ Join our community of developers creating universal apps.
 
 - issues: address in home screen has some issues. takes some time to initialize. handle that properly
 - use global state management solution to make the refreshes on the home screen absolutely necessary
+
+

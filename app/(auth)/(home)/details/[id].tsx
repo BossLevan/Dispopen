@@ -35,10 +35,11 @@ import { MintModal } from "@/components/MintModal";
 import { ZoraCreateTokenResponse } from "@/constants/types";
 import { showToast } from "@/components/Toast";
 import * as Clipboard from "expo-clipboard";
-import { dispopenZoraAddress } from "@/constants/constants";
+// import { dispopenZoraAddress } from "@/constants/constants";
 import * as Haptics from "expo-haptics";
 import Share from "react-native-share";
 import { getZoraDispopenLink } from "@/utils/zora_link";
+import { prettyCreatorWalletAddress } from "@/utils/pretty_wallet";
 
 export default function NFTModalScreen() {
   const navigation = useNavigation();
@@ -54,29 +55,6 @@ export default function NFTModalScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const options = Platform.select({
-    ios: {
-      activityItemSources: [
-        {
-          // For sharing url with custom title.
-          placeholderItem: { type: "url", content: "Dispopen" },
-          item: {
-            default: { type: "url", content: dispopenZoraAddress },
-          },
-          subject: {
-            default: "Share this dispopen on X",
-          },
-          linkMetadata: { originalUrl: dispopenZoraAddress },
-        },
-      ],
-    },
-    default: {
-      title: "Dispopen",
-      subject: "mint",
-      message: `check out this dispopen ${dispopenZoraAddress}`,
-    },
-  });
 
   const shareUrlWithMessage = async () => {
     const shareOptions = {
@@ -293,10 +271,18 @@ export default function NFTModalScreen() {
               {dispopen?.salesStrategies[0].zoraTimedMinter.erc20Z.symbol}
             </Text>
           </View>
+          <View style={styles.mintRow}>
+            <Text style={styles.mintLabel}>Creator</Text>
+            <Text style={styles.mintValue}>
+              {prettyCreatorWalletAddress(dispopen?.creator!)}
+            </Text>
+          </View>
         </View>
+
         <Text style={styles.disclaimer}>
           This dispopen is minted on the base network.{" "}
-          <Text style={styles.learnMore}>Learn more</Text>
+          <Text style={styles.learnMore}>Learn more</Text> Mint this dispopen to
+          get it closer to the official collection
         </Text>
         <MintModal
           visible={isModalVisible}
@@ -340,13 +326,13 @@ const styles = StyleSheet.create({
     // borderTopLeftRadius: 12,
     // borderTopRightRadius: 12,
   },
-  dismissHandle: {
-    alignItems: "center",
-    paddingVertical: 10,
-  },
+  // dismissHandle: {
+  //   alignItems: "center",
+  //   paddingVertical: 10,
+  // },
   buttonContainer: {
     width: "100%",
-    marginBottom: 32,
+    marginBottom: 0,
   },
   handle: {
     width: 40,
@@ -447,13 +433,15 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   mintInfo: {
-    marginBottom: 16,
-    gap: 8,
+    padding: 20,
+    borderRadius: 24,
+    gap: 30,
+    backgroundColor: "#F2F2F7",
   },
   mintRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    // marginBottom: 30,
   },
   mintLabel: {
     color: "#8E8E93",
@@ -468,9 +456,10 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontSize: 14,
     color: "#8E8E93",
-    textAlign: "center",
+    textAlign: "left",
     fontFamily: "CabinetGrotesk-Regular",
-    marginBottom: 20,
+    marginTop: 30,
+    lineHeight: 20,
   },
   learnMore: {
     color: "#007AFF",
@@ -478,7 +467,7 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     // position: "absolute",
-    // // bottom: 0,
+    // bottom: 0,
     borderTopWidth: 1,
     borderTopColor: "#E5E5EA",
   },

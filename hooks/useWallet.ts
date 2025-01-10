@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useLinkWithSiwe, usePrivy } from "@privy-io/expo";
 import { useConnect, useSignMessage, useDisconnect } from "wagmi";
 import type { Hex, SignableMessage } from "viem";
-import { baseSepolia } from "viem/chains";
+import { appChain } from "@/constants/constants";
 
 type WalletHook = {
   connectWallet: () => Promise<void>;
@@ -59,7 +59,7 @@ const connectWallet = useCallback(async () => {
       connect(
         {
           connector: connectors[0],
-          chainId: baseSepolia.id,
+          chainId: appChain.id,
         },
         {
           onSuccess: async (data) => {
@@ -74,7 +74,7 @@ const connectWallet = useCallback(async () => {
                 uri: "https://www.dispopen.com",
               },
               wallet: {
-                chainId: `${baseSepolia.id}`,
+                chainId: `${appChain.id}`,
                 address: walletAddress,
               },
             });
@@ -144,7 +144,7 @@ const connectWallet = useCallback(async () => {
         uri: "https://www.dispopen.com",
       },
       wallet: {
-        chainId: `${baseSepolia.id}`, // Change this to your desired chain ID
+        chainId: `${appChain.id}`, // Change this to your desired chain ID
         address,
       },
     });
