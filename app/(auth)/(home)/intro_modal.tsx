@@ -94,7 +94,7 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
                   { backgroundColor: step.accentColor },
                 ]}
               >
-                <step.icon size={20} color={step.mainColor} strokeWidth={2} />
+                <step.icon size={24} color={step.mainColor} strokeWidth={2} />
               </View>
               <View style={styles.stepContent}>
                 <Text style={styles.stepTitle}>{step.title}</Text>
@@ -120,7 +120,7 @@ export default function IntroModal({ onContinue }: { onContinue: () => void }) {
               />
             )}
             <Text style={styles.connectWalletText}>
-              {isLoading ? "Connecting..." : "Connect Wallet"}
+              {isLoading ? "Connecting..." : "Continue"}
             </Text>
           </View>
         </TouchableOpacity>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 36,
+    padding: 24,
     paddingTop: 0, // Remove top padding to accommodate the image
   },
   headerImage: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontFamily: "CabinetGrotesk-Extrabold",
     fontWeight: "bold",
-    marginBottom: 24,
+    marginBottom: 36,
     marginTop: 64,
     justifyContent: "center",
     alignSelf: "center",
@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
   step: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 16,
+    gap: 24,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -177,13 +177,13 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: "600",
     fontFamily: "CabinetGrotesk-Bold",
-    marginBottom: 0,
+    marginBottom: 4,
   },
   stepDescription: {
     fontSize: 19,
     lineHeight: 26,
     fontFamily: "CabinetGrotesk-Medium",
-    color: "#606060",
+    color: "#909090",
   },
   footer: {
     padding: 24,
@@ -191,11 +191,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   disclaimer: {
-    paddingHorizontal: 3,
+    paddingHorizontal: 2,
     fontSize: 15,
     lineHeight: 18,
     color: "#909090",
-    textAlign: "left",
+    textAlign: "center",
     marginBottom: 16,
     fontFamily: "CabinetGrotesk-Medium",
   },

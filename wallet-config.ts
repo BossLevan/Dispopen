@@ -15,11 +15,11 @@ import { createClient} from "viem";
 import { appChainIds, appLogoUrl, appName } from "./constants/constants";
    
   const metadata = {
-    appDeeplinkUrl: "https://www.dispopen.com", // required to establish your app's identity, use 'https://' link for production
-    // appCustomScheme: 'myapp://', // optional, used to remove the Done screen after signing
-    appName: appName,
-    appChainIds: appChainIds,
-    appLogoUrl: appLogoUrl
+    deeplinkUrl: "https://www.dispopen.com", // required to establish your app's identity, use 'https://' link for production
+    customScheme: 'myapp://dispopen', // optional, used to remove the Done screen after signing
+    name: appName,
+    chainIds: appChainIds,
+    logoUrl: appLogoUrl
   }
    
   export const config = createConfig({

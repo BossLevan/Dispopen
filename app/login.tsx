@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useSession } from "@/components/ctx";
 import * as Haptics from "expo-haptics";
-import { ResizeMode, Video } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 export default function WelcomeScreen() {

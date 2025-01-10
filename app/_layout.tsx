@@ -10,7 +10,7 @@ import { PrivyElements } from "@privy-io/expo";
 import { SessionProvider, useSession } from "../components/ctx";
 import { useEffect, useState } from "react";
 import React from "react";
-import { handleResponse } from "@mobile-wallet-protocol/client";
+// import { handleResponse } from "@mobile-wallet-protocol/client";
 import * as Linking from "expo-linking";
 import { Text } from "react-native";
 import * as Storage from "@/utils/storage_visit_name";
@@ -40,19 +40,19 @@ function RootLayoutNav() {
     boolean | null
   >(false);
 
-  useEffect(() => {
-    const subscription = Linking.addEventListener("url", ({ url }) => {
-      console.log("Incoming deeplink:", url);
-      try {
-        handleResponse(url);
-        router.back();
-      } catch (err) {
-        console.error(err);
-      }
-    });
+  // useEffect(() => {
+  //   const subscription = Linking.addEventListener("url", ({ url }) => {
+  //     console.log("Incoming deeplink:", url);
+  //     try {
+  //       handleResponse(url);
+  //       router.back();
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   });
 
-    return () => subscription.remove();
-  }, []);
+  //   return () => subscription.remove();
+  // }, []);
 
   useEffect(() => {
     // const checkDisplayNameVisit = async () => {
