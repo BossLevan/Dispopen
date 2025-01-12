@@ -3,7 +3,6 @@ import {
   httpsCallable,
   connectFunctionsEmulator,
 } from "firebase/functions";
-import { GraphQLClient, gql } from 'graphql-request';
 import { firebaseApp } from "@/firebaseConfig";
 import { getFirestore, connectFirestoreEmulator, collection, getDocs, doc, getDoc, setDoc, serverTimestamp, updateDoc, increment, onSnapshot } from "firebase/firestore";
 import { ApiResponse, Frame, Token, ZoraCreateTokenResponse } from "@/constants/types";
@@ -20,9 +19,6 @@ const getUserDispopens = httpsCallable<any>(functions, "getUserDispopens");
 const getUserDispopen = httpsCallable<any>(functions, "getUserDispopen");
 const getFeaturedDispopens = httpsCallable<any>(functions, "getFeaturedDispopens");
 const getGraduatedDispopensLength = httpsCallable<any>(functions, "getGraduatedDispopensLength");
-
-const endpoint = 'https://api.goldsky.com/api/public/project_clhk16b61ay9t49vm6ntn4mkz/subgraphs/zora-create-base-sepolia/stable/gn';
-const client = new GraphQLClient(endpoint);
 
 export const apiService = {
   // async getUserDispopens(creatorAddress: string): Promise<ApiResponse<Token[]>> {

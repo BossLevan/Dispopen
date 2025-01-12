@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     marginRight: 8,
     fontFamily: "CabinetGrotesk-Extrabold",
   },

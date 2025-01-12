@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 
 const AuthContext = createContext<{
   signIn: () => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
   session?: string | null;
   isLoading: boolean;
   isPrivyLoading: boolean;
@@ -18,7 +18,7 @@ const AuthContext = createContext<{
   setSession: () => void;
 }>({
   signIn: () => null,
-  signOut: () => null,
+  signOut: async () => {},
   session: null,
   isLoading: false,
   isPrivyLoading: false,
@@ -58,12 +58,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
             .then((session) => {
               console.log("User logged in", session.user);
               setSignInPrivy("true");
+              setHasSeenIntro(null);
               //handle errors
             })
             .catch((e) => console.log(e));
         },
-        signOut: () => {
-          logout();
+        signOut: async () => {
+          await logout();
+
           setSession(null);
           setSignInPrivy(null);
           setHasSeenIntro(null);

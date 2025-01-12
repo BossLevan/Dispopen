@@ -13,7 +13,7 @@ import * as Haptics from "expo-haptics";
 import "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
-export default function LoginScreen() {
+export default function WelcomeScreen() {
   const { signIn } = useSession();
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -172,3 +172,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+// import { Link, Stack } from "expo-router";
+// import { StyleSheet } from "react-native";
+
+// import { ThemedView } from "@/components/ThemedView";
+
+// export default function WelcomeScreen() {
+//   return (
+//     <>
+//       <Stack.Screen options={{ title: "Oops!" }} />
+//     </>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     alignItems: "center",
+//     justifyContent: "center",
+//     padding: 20,
+//   },
+//   link: {
+//     marginTop: 15,
+//     paddingVertical: 15,
+//   },
+// });

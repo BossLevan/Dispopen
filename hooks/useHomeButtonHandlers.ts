@@ -59,7 +59,7 @@ export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary:
 
     disconnect()
     signOut() 
-    await Storage.Storage.clearStorage()
+    // await Storage.Storage.clearStorage()
     Alert.alert("Sign Out", "You have been signed out.");
     // Implement sign out logic here
     // const signOutWell = async () =>{

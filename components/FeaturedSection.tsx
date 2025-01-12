@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     paddingHorizontal: 16,
-    fontSize: 16,
+    fontSize: 15,
     color: "#666",
     justifyContent: "center",
     alignContent: "center",

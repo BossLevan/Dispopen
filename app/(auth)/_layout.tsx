@@ -16,7 +16,7 @@ export default function RootLayout() {
         name="(home)/intro_modal"
         options={{
           headerShown: false,
-          presentation: "modal",
+          presentation: "fullScreenModal",
           gestureEnabled: false,
         }}
       />
@@ -40,8 +40,8 @@ export default function RootLayout() {
           //   fullScreenGestureEnabled: true,
         }}
       />
-
-      <Stack.Screen name="display_name" options={{ headerShown: false }} />
+      {/* 
+      <Stack.Screen name="display_name" options={{ headerShown: false }} /> */}
     </Stack>
   );
 }

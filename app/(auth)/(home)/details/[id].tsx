@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 // import { View, StyleSheet } from "react-native";
 import NFTModalDisplay from "@/components/NftModal"; // Adjust the import path as needed
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as DropdownMenu from "zeego/dropdown-menu";
 
 import React, { useRef, useEffect, useState } from "react";

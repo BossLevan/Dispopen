@@ -36,12 +36,9 @@ import {
   DispopenCard,
   DispopenCardProps,
 } from "@/components/home/DispopenCard";
-import { useIsFocused } from "@react-navigation/native";
-import { useSession } from "@/components/ctx";
 import { useAccount } from "wagmi";
 import { apiService } from "@/api/api";
 import { router } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import { useImageState } from "@/hooks/useDispopenState";
 import { useActionSheetHandlers } from "@/hooks/useHomeButtonHandlers";
@@ -146,8 +143,8 @@ const HomeScreen: React.FC = () => {
     console.log("hasSeenIntro", hasSeenIntro);
     if (hasSeenIntro == "false" || hasSeenIntro == null) {
       const timer = setTimeout(() => {
-        router.push("/(home)/intro_modal");
-      }, 2000); // Navigate to modal after 1 second
+        router.push("/(auth)/(home)/intro_modal");
+      }, 1000); // Navigate to modal after 1 second
 
       return () => clearTimeout(timer);
     }
@@ -157,6 +154,8 @@ const HomeScreen: React.FC = () => {
   const handleWalletPress = async () => {
     // console.log(address);
     await Clipboard.setStringAsync(address as string);
+
+    //TODO: should be able to connect wallet by pressing button
     showToast("success", "Copied Address");
   };
 
@@ -209,7 +208,7 @@ const HomeScreen: React.FC = () => {
             gradientColors={["#61A0FF", "#FC52FE", "#FB6767"]}
           />
         </View>
-        {/* 
+        {/*
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured</Text>
@@ -512,16 +511,16 @@ const styles = StyleSheet.create({
   },
   emptyStateTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+
     fontFamily: "CabinetGrotesk-Bold",
     color: "#333",
   },
   emptyStateSubtitle: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 15,
+    color: "#8B8A8A",
     textAlign: "center",
     fontFamily: "CabinetGrotesk-Medium",
-    marginTop: 8,
+    marginTop: 4,
   },
 });
 

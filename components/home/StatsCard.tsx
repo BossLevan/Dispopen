@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   badgeText: {
-    fontWeight: "500",
+    // fontWeight: "500",
     fontFamily: "CabinetGrotesk-Extrabold",
   },
   valueContainer: {
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   },
   statsValue: {
     fontSize: 40,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     fontFamily: "CabinetGrotesk-Extrabold",
     color: "#000",
     lineHeight: 48, // Match the container height
