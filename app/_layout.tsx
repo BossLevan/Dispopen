@@ -42,7 +42,12 @@ function RootLayoutNav() {
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      const timer = setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 1000);
+      return () => clearTimeout(timer);
+
+      // SplashScreen.hideAsync();
     }
   }, [loaded]);
 

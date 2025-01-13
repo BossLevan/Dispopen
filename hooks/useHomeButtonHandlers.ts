@@ -33,21 +33,25 @@ export const useActionSheetHandlers = (openCamera: () => void, openImageLibrary:
   const handleSettingsPress = () => {
     if (Platform.OS === "ios") {
       ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ["Cancel", "Terms and Privacy", "Sign Out", "Delete Account"],
-          destructiveButtonIndex: 3,
+        {//"Terms and Privacy",  "Delete Account"
+          options: ["Cancel", "Sign Out",],
+          destructiveButtonIndex: 1,
           cancelButtonIndex: 0,
         },
         (buttonIndex) => {
           if (buttonIndex === 1) {
-            // Navigate to Terms and Privacy
-          } else if (buttonIndex === 2) {
-            // Sign out logic
+            // Sign out
             handleSignOut()
-          } else if (buttonIndex === 3) {
-            // Delete account logic
-            handleDeleteAccount()
-          }
+          } 
+          // if (buttonIndex === 1) {
+          //   // Navigate to Terms and Privacy
+          // } else if (buttonIndex === 2) {
+          //   // Sign out logic
+          //   handleSignOut()
+          // } else if (buttonIndex === 3) {
+          //   // Delete account logic
+          //   handleDeleteAccount()
+          // }
         }
       );
     } else {

@@ -144,7 +144,7 @@ const HomeScreen: React.FC = () => {
     if (hasSeenIntro == "false" || hasSeenIntro == null) {
       const timer = setTimeout(() => {
         router.push("/(auth)/(home)/intro_modal");
-      }, 1000); // Navigate to modal after 1 second
+      }, 2000); // Navigate to modal after 1 second
 
       return () => clearTimeout(timer);
     }
@@ -161,7 +161,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      {/* <StatusBar style="dark" /> */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
