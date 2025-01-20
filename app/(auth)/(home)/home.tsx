@@ -161,7 +161,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <StatusBar style="dark" /> */}
+      <StatusBar style="dark" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={

@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontSize: 14,
     color: "#8E8E93",
-    textAlign: "left",
+    textAlign: "center",
     fontFamily: "CabinetGrotesk-Regular",
     marginTop: 30,
     lineHeight: 20,
